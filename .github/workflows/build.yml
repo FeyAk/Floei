@@ -1,0 +1,30 @@
+```yaml
+name: Build Windows EXE
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Build Windows installer + portable EXE
+        run: npx electron-builder --win --publish never
+      - name: Upload artifacts (downloadable from the Actions run)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Floei-Windows
+          path: dist/*.exe
+      - name: Attach to GitHub Release (only on version tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
