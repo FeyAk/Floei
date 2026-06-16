@@ -43,6 +43,12 @@ body{font-family:'Inter','Segoe UI Variable Text','Segoe UI',system-ui,-apple-sy
 .tb-label{font-size:11px;color:var(--muted);min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
 #main{display:flex;height:calc(100vh - 52px)}
 #sidebar{width:160px;background:var(--panel);border-right:1px solid var(--border-soft);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.pal-tabs{display:flex;gap:6px;padding:11px 10px 2px}
+.pal-tab{flex:1;background:var(--input-bg);border:1px solid var(--border);color:var(--muted);font-size:10.5px;font-weight:600;padding:6px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all 0.18s;letter-spacing:0.04em}
+.pal-tab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.notation-row{display:flex;gap:14px;align-items:center;margin:9px 0 2px;font-size:11px;color:var(--text)}
+.notation-row label{display:flex;gap:5px;align-items:center;cursor:pointer}
+.notation-row input{accent-color:var(--accent)}
 .side-title{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:0.14em;padding:14px 13px 8px;text-transform:uppercase}
 .tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 10px}
 .tile{background:var(--input-bg);border:1px solid var(--border-soft);border-radius:10px;padding:9px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:grab;user-select:none;transition:all 0.18s cubic-bezier(0.2,0.7,0.3,1)}
@@ -71,8 +77,8 @@ body.light .tile:hover{box-shadow:0 6px 18px rgba(31,44,61,0.12)}
 #hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:var(--panel-glass);backdrop-filter:blur(12px);border:1px solid var(--accent);border-radius:10px;padding:7px 16px;font-size:12px;color:var(--accent);pointer-events:none;display:none;z-index:100;box-shadow:0 4px 20px rgba(45,212,160,0.18)}
 #toast{position:absolute;bottom:14px;right:14px;background:var(--panel-glass);backdrop-filter:blur(12px);border:1px solid var(--accent);border-radius:10px;padding:7px 16px;font-size:12px;color:var(--accent);display:none;z-index:100;box-shadow:0 4px 20px rgba(45,212,160,0.18)}
 #rename-input{position:absolute;display:none;z-index:200;background:var(--panel);border:1px solid var(--accent);border-radius:7px;color:var(--text-strong);font-size:12px;padding:5px 9px;outline:none;text-align:center;font-family:inherit;box-shadow:0 4px 18px rgba(0,0,0,0.35)}
-#modal-bg{position:fixed;inset:0;background:rgba(4,6,10,0.6);display:none;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(4px)}
-#modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:min(540px,94vw);padding:20px 22px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+.overlay,#modal-bg{position:fixed;inset:0;background:rgba(4,6,10,0.6);display:none;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(4px)}
+.dialog,#modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:min(540px,94vw);padding:20px 22px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
 #modal h3{font-size:14.5px;color:var(--text-strong);font-weight:600;margin-bottom:12px}
 #modal h3 i{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .tabs{display:flex;gap:7px;margin-bottom:13px}
@@ -92,34 +98,69 @@ body.light .tile:hover{box-shadow:0 6px 18px rgba(31,44,61,0.12)}
 #modal .btns{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media(max-width:780px){#sidebar{width:122px}.tile-grid{grid-template-columns:1fr}#props{width:132px}#diagram-name{width:100px}}
+.menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--panel);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);display:none;flex-direction:column;min-width:185px;z-index:400;padding:5px;max-height:62vh;overflow-y:auto}
+.menu.open{display:flex}
+.menu button{background:transparent;border:none;color:var(--text);font:inherit;font-size:12px;text-align:left;padding:7px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.menu button:hover{background:var(--accent-bg);color:var(--text-strong)}
+.menu-row{display:flex;align-items:center}
+.menu-row button:first-child{flex:1;overflow:hidden;text-overflow:ellipsis}
+.menu-row .del{color:#d8475f;flex:0 0 auto}
+.check-item{display:flex;gap:8px;align-items:flex-start;width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:7px;font-size:11.5px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;line-height:1.5}
+.check-item:hover{border-color:var(--accent)}
+.check-item .dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;margin-top:4px}
+.check-item.error .dot{background:#d8475f}
+.check-item.warn .dot{background:#e3b54a}
+.check-ok{font-size:12px;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;line-height:1.5}
+.badge{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.06em;border:1px solid var(--accent);color:var(--accent);border-radius:5px;padding:1px 7px;margin-left:8px;vertical-align:middle}
+.task-text{font-size:12px;color:var(--text);line-height:1.7;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin:10px 0}
+#train-fb{font-size:11.5px;color:var(--text);line-height:1.65;margin-top:11px;white-space:pre-wrap;max-height:230px;overflow-y:auto}
 </style>
 </head>
 <body>
 <div id="topbar">
   <div id="logo"><i>⬡</i> Floei</div>
-  <input id="diagram-name" placeholder="Unbenanntes Diagramm" />
+  <div style="position:relative;display:flex;align-items:center;gap:2px">
+    <input id="diagram-name" placeholder="Unbenanntes Diagramm" />
+    <button class="tb-btn" id="btn-docs" title="Diagramme verwalten">▾</button>
+    <div id="doc-menu" class="menu" style="left:0;right:auto"></div>
+  </div>
   <div class="spacer"></div>
   <button class="tb-btn" id="zm" title="Verkleinern">−</button>
   <span class="tb-label" id="zoom-lbl">100%</span>
   <button class="tb-btn" id="zp" title="Vergrößern">+</button>
   <button class="tb-btn" id="zr">Reset</button>
   <div class="tb-sep"></div>
-  <button class="tb-btn accent" id="btn-auto">⚡ Auto-EPK</button>
+  <button class="tb-btn accent" id="btn-auto">⚡ Auto</button>
   <button class="tb-btn" id="btn-connect">⤳ Verbinden</button>
+  <button class="tb-btn" id="btn-layout" title="Diagramm automatisch anordnen">▦ Layout</button>
+  <button class="tb-btn" id="btn-pool" title="Pool mit Lanes einfügen">⊞ Pool</button>
+  <button class="tb-btn" id="btn-check" title="EPK/BPMN-Regeln prüfen">✓ Check</button>
+  <button class="tb-btn" id="btn-train" title="Übungsaufgaben">🎓 Üben</button>
   <button class="tb-btn" id="btn-del">Löschen</button>
   <div class="tb-sep"></div>
-  <button class="tb-btn" id="btn-png">PNG</button>
-  <button class="tb-btn" id="btn-svg">SVG</button>
-  <button class="tb-btn" id="btn-json">JSON ↓</button>
-  <button class="tb-btn" id="btn-import">JSON ↑</button>
+  <div style="position:relative">
+    <button class="tb-btn" id="btn-export-menu">Export ▾</button>
+    <div id="export-menu" class="menu">
+      <button id="btn-png">🖼 PNG-Bild</button>
+      <button id="btn-svg">📐 SVG-Vektor</button>
+      <button id="btn-drawio">🔷 draw.io-Datei</button>
+      <button id="btn-json">💾 JSON speichern</button>
+      <button id="btn-import">📂 JSON laden…</button>
+      <button id="btn-share">🔗 Link kopieren</button>
+    </div>
+  </div>
   <button class="tb-btn" id="btn-clear">Neu</button>
-  <div class="tb-sep"></div>
   <button class="tb-btn" id="btn-theme" title="Theme wechseln">🌙</button>
 </div>
 
 <div id="main">
   <div id="sidebar">
-    <div class="side-title">EPK Elemente</div>
+    <div class="pal-tabs">
+      <button class="pal-tab active" data-pal="epk">EPK</button>
+      <button class="pal-tab" data-pal="bpmn">BPMN</button>
+    </div>
+    <div id="pal-epk">
+    <div class="side-title">Elemente</div>
     <div class="tile-grid">
       <div class="tile" draggable="true" data-type="ereignis" title="Ereignis — Zustand">
         <svg width="52" height="24" viewBox="0 0 52 24"><polygon points="4,12 10,3 42,3 48,12 42,21 10,21" class="sh-ereignis" stroke-width="1.4"/></svg>
@@ -161,8 +202,87 @@ body.light .tile:hover{box-shadow:0 6px 18px rgba(31,44,61,0.12)}
         <span class="tile-label">XOR</span>
       </div>
     </div>
+    </div>
+    <div id="pal-bpmn" style="display:none">
+    <div class="side-title">Ereignisse</div>
+    <div class="tile-grid">
+      <div class="tile" draggable="true" data-type="b_start" title="Startereignis">
+        <svg width="30" height="26" viewBox="0 0 30 26"><circle cx="15" cy="13" r="10" class="sh-b_start" stroke-width="1.5"/></svg>
+        <span class="tile-label">Start</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_inter" title="Zwischenereignis">
+        <svg width="30" height="26" viewBox="0 0 30 26"><circle cx="15" cy="13" r="10" class="sh-b_inter" stroke-width="1.3"/><circle cx="15" cy="13" r="7.6" class="sh-b_inter-s" stroke-width="1.3"/></svg>
+        <span class="tile-label">Zwischen</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_end" title="Endereignis">
+        <svg width="30" height="26" viewBox="0 0 30 26"><circle cx="15" cy="13" r="10" class="sh-b_end" stroke-width="2.8"/></svg>
+        <span class="tile-label">Ende</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_task" title="Aufgabe / Task">
+        <svg width="52" height="26" viewBox="0 0 52 26"><rect x="4" y="4" width="44" height="18" rx="5" class="sh-b_task" stroke-width="1.4"/></svg>
+        <span class="tile-label">Task</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_subprocess" title="Teilprozess (Sub-Process)">
+        <svg width="52" height="26" viewBox="0 0 52 26"><rect x="4" y="4" width="44" height="18" rx="5" class="sh-b_subprocess" stroke-width="1.4"/><rect x="22" y="17.5" width="8" height="8" class="sh-b_subprocess" stroke-width="1"/><path d="M26,19 v4 M24,21 h4" class="sh-b_subprocess-s" stroke-width="1"/></svg>
+        <span class="tile-label">Teilprozess</span>
+      </div>
+    </div>
+    <div class="side-title" style="padding-top:14px">Gateways</div>
+    <div class="tile-grid">
+      <div class="tile" draggable="true" data-type="b_gw_x" title="Exklusives Gateway (XOR)">
+        <svg width="30" height="28" viewBox="0 0 30 28"><polygon points="15,2 28,14 15,26 2,14" class="sh-b_gw_x" stroke-width="1.4"/><path d="M11,10 L19,18 M19,10 L11,18" class="sh-b_gw_x-s" stroke-width="1.6"/></svg>
+        <span class="tile-label">XOR</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_gw_and" title="Paralleles Gateway (AND)">
+        <svg width="30" height="28" viewBox="0 0 30 28"><polygon points="15,2 28,14 15,26 2,14" class="sh-b_gw_and" stroke-width="1.4"/><path d="M15,8 L15,20 M9,14 L21,14" class="sh-b_gw_and-s" stroke-width="1.6"/></svg>
+        <span class="tile-label">AND</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_gw_or" title="Inklusives Gateway (OR)">
+        <svg width="30" height="28" viewBox="0 0 30 28"><polygon points="15,2 28,14 15,26 2,14" class="sh-b_gw_or" stroke-width="1.4"/><circle cx="15" cy="14" r="5" class="sh-b_gw_or-s" stroke-width="1.6"/></svg>
+        <span class="tile-label">OR</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_gw_xe" title="Ereignisbasiertes Gateway">
+        <svg width="30" height="28" viewBox="0 0 30 28"><polygon points="15,2 28,14 15,26 2,14" class="sh-b_gw_xe" stroke-width="1.4"/><circle cx="15" cy="14" r="6" class="sh-b_gw_xe-s" stroke-width="1"/><circle cx="15" cy="14" r="4" class="sh-b_gw_xe-s" stroke-width="1"/></svg>
+        <span class="tile-label">Ereignis</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_gw_complex" title="Komplexes Gateway">
+        <svg width="30" height="28" viewBox="0 0 30 28"><polygon points="15,2 28,14 15,26 2,14" class="sh-b_gw_complex" stroke-width="1.4"/><path d="M15,8 v12 M9,14 h12 M10.5,9.5 l9,9 M19.5,9.5 l-9,9" class="sh-b_gw_complex-s" stroke-width="1.3"/></svg>
+        <span class="tile-label">Komplex</span>
+      </div>
+    </div>
+    <div class="side-title" style="padding-top:14px">Daten & Artefakte</div>
+    <div class="tile-grid">
+      <div class="tile" draggable="true" data-type="b_data" title="Datenobjekt">
+        <svg width="30" height="28" viewBox="0 0 30 28"><path d="M6,3 h13 l5,5 v17 h-18 z" class="sh-b_data" stroke-width="1.4"/><path d="M19,3 v5 h5" class="sh-b_data-s" stroke-width="1.4"/></svg>
+        <span class="tile-label">Daten</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_store" title="Datenspeicher (Database)">
+        <svg width="30" height="28" viewBox="0 0 30 28"><path d="M5,7 v14 a10,4 0 0 0 20,0 v-14" class="sh-b_store" stroke-width="1.4"/><ellipse cx="15" cy="7" rx="10" ry="4" class="sh-b_store" stroke-width="1.4"/></svg>
+        <span class="tile-label">Speicher</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_group" title="Gruppierung (Artefakt)">
+        <svg width="52" height="26" viewBox="0 0 52 26"><rect x="3" y="3" width="46" height="20" rx="5" class="sh-b_group" stroke-width="1.4" stroke-dasharray="4,3"/></svg>
+        <span class="tile-label">Gruppe</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_custom" title="Individuelles Symbol (Artefakt)">
+        <svg width="34" height="28" viewBox="0 0 34 28"><polygon points="17,2 20,8 27,7 23,13 28,18 21,18 18,25 15,19 8,21 11,14 5,10 13,9" class="sh-b_custom" stroke-width="1.2"/></svg>
+        <span class="tile-label">Symbol</span>
+      </div>
+    </div>
+    <div class="side-title" style="padding-top:14px">Container</div>
+    <div class="tile-grid">
+      <div class="tile" draggable="true" data-type="b_lane" title="Pool / Lane — Verantwortungsbereich (nur am Rand/Beschriftungsstreifen anklickbar)">
+        <svg width="52" height="26" viewBox="0 0 52 26"><rect x="2" y="3" width="48" height="20" class="sh-b_lane" stroke-width="1.3"/><line x1="13" y1="3" x2="13" y2="23" class="sh-b_lane-s" stroke-width="1.3"/></svg>
+        <span class="tile-label">Lane</span>
+      </div>
+      <div class="tile" draggable="true" data-type="b_note" title="Anmerkung / Annotation — Verbindungen werden automatisch zur Assoziation">
+        <svg width="52" height="26" viewBox="0 0 52 26"><path d="M16,4 L7,4 L7,22 L16,22" class="sh-b_note-s" stroke-width="1.5"/><path d="M21,9 h22 M21,13.5 h16 M21,18 h19" class="sh-b_note-s" stroke-width="1.1"/></svg>
+        <span class="tile-label">Notiz</span>
+      </div>
+    </div>
+    </div>
     <div id="shortcuts">
-      <p><b>Pfeiltasten</b> Verschieben<br><b>Doppelklick</b> Umbenennen<br><b>Entf</b> Löschen<br><b>Esc</b> Abbrechen<br><b>Alt+Drag</b> Kopieren<br><b>Strg+Z</b> Rückgängig<br><b>Strg+S</b> Speichern</p>
+      <p><b>Pfeiltasten</b> Verschieben<br><b>Doppelklick</b> Umbenennen<br><b>Entf</b> Löschen<br><b>Esc</b> Abbrechen<br><b>Alt+Drag</b> Kopieren<br><b>Strg+Z</b> Rückgängig<br><b>Strg+Y</b> Wiederholen<br><b>Strg+S</b> Speichern</p>
     </div>
   </div>
 
@@ -192,6 +312,7 @@ body.light .tile:hover{box-shadow:0 6px 18px rgba(31,44,61,0.12)}
           <div class="prop-lbl">Höhe <span id="prop-h-lbl">54</span></div>
           <input type="range" class="prop-slider" id="prop-h" min="36" max="130" step="1" value="54"/>
         </div>
+        <div id="bpmn-props"></div>
       </div>
     </div>
     <div id="stats">
@@ -234,6 +355,10 @@ E: Prozess abgeschlossen</textarea>
       <div class="sub">
         Aufgabentext (z.B. aus einer AP2-Aufgabe) einfügen — die KI modelliert die komplette EPK inkl. <b>XOR-Verzweigungen und Schleifen</b> und Floei ordnet sie automatisch an.
       </div>
+      <div class="notation-row">Notation:
+        <label><input type="radio" name="ki-notation" value="epk" checked> EPK</label>
+        <label><input type="radio" name="ki-notation" value="bpmn"> BPMN 2.0</label>
+      </div>
       <textarea id="ai-text" class="modal-ta" spellcheck="false" placeholder="Der Prozess beginnt mit dem Reisewunsch eines Kunden. Daraufhin erstellt der Reisebüro-Mitarbeiter ein schriftliches Reiseangebot. Der Kunde entscheidet nun über die Annahme oder Ablehnung …"></textarea>
       <input id="api-key" class="prop-val" type="password" placeholder="Anthropic API-Schlüssel (sk-ant-…)" />
       <div class="key-note">Der Schlüssel wird nur lokal in deinem Browser gespeichert und direkt an die Anthropic-API gesendet. Erhältlich unter <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.</div>
@@ -244,6 +369,48 @@ E: Prozess abgeschlossen</textarea>
       <button class="tb-btn" id="auto-cancel">Abbrechen</button>
       <button class="tb-btn accent" id="auto-go">Generieren</button>
     </div>
+  </div>
+</div>
+
+
+<div id="pool-bg" class="overlay">
+  <div class="dialog">
+    <h3><i>⊞</i> Pool mit Lanes einfügen</h3>
+    <div class="sub">Erzeugt einen waagerechten Pool mit beschrifteten Lanes (Verantwortungsbereiche). Elemente, die du hineinlegst, bewegen sich mit der Lane mit.</div>
+    <div class="prop-lbl" style="margin-top:4px">Pool-Name</div>
+    <input id="pool-name" class="prop-val" value="Videothek" />
+    <div class="prop-lbl" style="margin-top:12px">Lanes (eine pro Zeile)</div>
+    <textarea id="pool-lanes" class="modal-ta" style="height:120px" spellcheck="false">VK
+VM
+VL</textarea>
+    <div class="prop-lbl" style="margin-top:12px">Breite (px)</div>
+    <input id="pool-width" class="prop-val" type="number" value="1200" min="400" max="4000" />
+    <div class="btns"><button class="tb-btn" id="pool-cancel">Abbrechen</button><button class="tb-btn accent" id="pool-go">Einfügen</button></div>
+  </div>
+</div>
+
+<div id="check-bg" class="overlay">
+  <div class="dialog">
+    <h3><i>✓</i> Regelcheck</h3>
+    <div class="sub">Prüft EPK-Grundregeln (E/F-Wechsel, Entscheidungen, Konnektoren) und BPMN-Basics. Klick auf einen Eintrag springt zum Element.</div>
+    <div id="check-results"></div>
+    <div class="btns"><button class="tb-btn" id="check-close">Schließen</button><button class="tb-btn accent" id="check-rerun">Erneut prüfen</button></div>
+  </div>
+</div>
+
+<div id="train-bg" class="overlay">
+  <div class="dialog">
+    <h3><i>🎓</i> Übungsmodus <span class="badge" id="train-badge">EPK</span></h3>
+    <div class="sub" id="train-title"></div>
+    <div class="task-text" id="train-text"></div>
+    <div class="btns" style="justify-content:flex-start;flex-wrap:wrap">
+      <button class="tb-btn" id="train-new">🎲 Neue Aufgabe</button>
+      <button class="tb-btn" id="train-model">✏️ Selbst modellieren</button>
+      <button class="tb-btn" id="train-solution">💡 Musterlösung laden</button>
+      <button class="tb-btn accent" id="train-feedback">🤖 KI-Feedback</button>
+    </div>
+    <div id="train-fb"></div>
+    <div class="btns"><button class="tb-btn" id="train-close">Schließen</button></div>
   </div>
 </div>
 
@@ -259,9 +426,10 @@ let nodes = [], connections = [];
 let selected = null, selectedConn = null;
 let zoom = 1, panX = 0, panY = 0;
 let dragging = null, dragOffX = 0, dragOffY = 0, dragMoved = false;
+let dragPassengers = [], dragStartX = 0, dragStartY = 0;
 let panning = false, panStartX = 0, panStartY = 0, panOrigX = 0, panOrigY = 0;
 let connectMode = false, connectFrom = null, mouseWX = 0, mouseWY = 0;
-let history = [];
+let history = [], redoStack = [];
 const MAX_HISTORY = 60;
 let idCounter = 1;
 const STORAGE_KEY = 'floei-diagram';
@@ -279,7 +447,23 @@ const THEMES = {
       prozess:  {stroke:'#6b7a90', fill:'#f0f3f7'},
       and:      {stroke:'#6b7a90', fill:'#f4f6f9'},
       or:       {stroke:'#6b7a90', fill:'#f4f6f9'},
-      xor:      {stroke:'#6b7a90', fill:'#f4f6f9'}
+      xor:      {stroke:'#6b7a90', fill:'#f4f6f9'},
+      b_start:  {stroke:'#2f9e5b', fill:'#e8f7ee'},
+      b_inter:  {stroke:'#c98a2a', fill:'#fcf1dd'},
+      b_end:    {stroke:'#d8475f', fill:'#fdecef'},
+      b_task:   {stroke:'#3179c2', fill:'#e9f2fc'},
+      b_gw_x:   {stroke:'#bb8d21', fill:'#fcf4dd'},
+      b_gw_and: {stroke:'#bb8d21', fill:'#fcf4dd'},
+      b_gw_or:  {stroke:'#bb8d21', fill:'#fcf4dd'},
+      b_data:   {stroke:'#6b7a90', fill:'#f0f3f7'},
+      b_store:  {stroke:'#6b7a90', fill:'#f0f3f7'},
+      b_subprocess:{stroke:'#3179c2', fill:'#e9f2fc'},
+      b_gw_xe:  {stroke:'#bb8d21', fill:'#fcf4dd'},
+      b_gw_complex:{stroke:'#bb8d21', fill:'#fcf4dd'},
+      b_group:  {stroke:'#8595aa', fill:'rgba(0,0,0,0)'},
+      b_note:   {stroke:'#8595aa', fill:'rgba(0,0,0,0)'},
+      b_lane:   {stroke:'#b8c4d4', fill:'rgba(133,149,170,0.05)'},
+      b_custom: {stroke:'#5a8fb5', fill:'#eaf2f8'}
     }
   },
   dark: {
@@ -293,7 +477,23 @@ const THEMES = {
       prozess:  {stroke:'#7d8aa0', fill:'#141a22'},
       and:      {stroke:'#8a97ad', fill:'#10161e'},
       or:       {stroke:'#8a97ad', fill:'#10161e'},
-      xor:      {stroke:'#8a97ad', fill:'#10161e'}
+      xor:      {stroke:'#8a97ad', fill:'#10161e'},
+      b_start:  {stroke:'#46c97e', fill:'#0d2117'},
+      b_inter:  {stroke:'#e8a14a', fill:'#241a08'},
+      b_end:    {stroke:'#ef6e7e', fill:'#251015'},
+      b_task:   {stroke:'#56a8e8', fill:'#0c1a26'},
+      b_gw_x:   {stroke:'#e3c84a', fill:'#242008'},
+      b_gw_and: {stroke:'#e3c84a', fill:'#242008'},
+      b_gw_or:  {stroke:'#e3c84a', fill:'#242008'},
+      b_data:   {stroke:'#8a97ad', fill:'#141a22'},
+      b_store:  {stroke:'#8a97ad', fill:'#141a22'},
+      b_subprocess:{stroke:'#56a8e8', fill:'#0c1a26'},
+      b_gw_xe:  {stroke:'#e3c84a', fill:'#242008'},
+      b_gw_complex:{stroke:'#e3c84a', fill:'#242008'},
+      b_group:  {stroke:'#7d8aa0', fill:'rgba(0,0,0,0)'},
+      b_note:   {stroke:'#7d8aa0', fill:'rgba(0,0,0,0)'},
+      b_lane:   {stroke:'#2e3a4a', fill:'rgba(90,110,140,0.05)'},
+      b_custom: {stroke:'#6aa8d8', fill:'#0e1922'}
     }
   }
 };
@@ -305,8 +505,8 @@ function applyTheme(){
   // sidebar tile SVG colors
   const c = T().colors;
   const style = document.getElementById('tile-style') || (()=>{ const s=document.createElement('style'); s.id='tile-style'; document.head.appendChild(s); return s; })();
-  style.textContent = ['ereignis','funktion','org','info','dokument','prozess'].map(t =>
-    `.sh-${t}{fill:${c[t].fill};stroke:${c[t].stroke}}`).join('') +
+  style.textContent = Object.keys(c).map(t =>
+    `.sh-${t}{fill:${c[t].fill};stroke:${c[t].stroke}}.sh-${t}-s{fill:none;stroke:${c[t].stroke}}`).join('') +
     `.sh-org-l{stroke:${c.org.stroke}}` +
     `.sh-conn{fill:${c.and.fill};stroke:${c.and.stroke}}` +
     `.sh-conn-i{stroke:${c.and.stroke}}` +
@@ -319,10 +519,37 @@ document.getElementById('btn-theme').onclick = () => {
   applyTheme();
 };
 
-const LABELS = {ereignis:'Ereignis',funktion:'Funktion',org:'Org.-Einheit',info:'Info-Objekt',dokument:'Dokument',prozess:'Prozesspfad',and:'∧',or:'∨',xor:'XOR'};
-const TYPE_NAMES = {ereignis:'Ereignis',funktion:'Funktion',org:'Org.-Einheit',info:'Info-Objekt',dokument:'Dokument',prozess:'Prozesspfad',and:'AND-Konnektor',or:'OR-Konnektor',xor:'XOR-Konnektor'};
+const LABELS = {ereignis:'Ereignis',funktion:'Funktion',org:'Org.-Einheit',info:'Info-Objekt',dokument:'Dokument',prozess:'Prozesspfad',and:'∧',or:'∨',xor:'XOR',b_start:'',b_inter:'',b_end:'',b_task:'Task',b_gw_x:'',b_gw_and:'',b_gw_or:'',b_data:'Daten',b_store:'',b_note:'Anmerkung',b_group:'Gruppe',b_lane:'Lane',b_subprocess:'Teilprozess',b_gw_xe:'',b_gw_complex:'',b_custom:'Symbol'};
+const TYPE_NAMES = {ereignis:'Ereignis',funktion:'Funktion',org:'Org.-Einheit',info:'Info-Objekt',dokument:'Dokument',prozess:'Prozesspfad',and:'AND-Konnektor',or:'OR-Konnektor',xor:'XOR-Konnektor',b_start:'Startereignis',b_inter:'Zwischenereignis',b_end:'Endereignis',b_task:'Aufgabe (Task)',b_gw_x:'Exklusives Gateway',b_gw_and:'Paralleles Gateway',b_gw_or:'Inklusives Gateway',b_data:'Datenobjekt',b_store:'Datenspeicher',b_note:'Anmerkung',b_group:'Gruppierung',b_lane:'Pool / Lane',b_subprocess:'Teilprozess',b_gw_xe:'Ereignisbasiertes Gateway',b_gw_complex:'Komplexes Gateway',b_custom:'Individuelles Symbol'};
 const VALID_TYPES = Object.keys(LABELS);
 const CONNECTOR_TYPES = ['and','or','xor'];
+const ROUND_TYPES = [...CONNECTOR_TYPES, 'b_start','b_inter','b_end'];
+const DIAMOND_TYPES = ['b_gw_x','b_gw_and','b_gw_or','b_gw_xe','b_gw_complex'];
+const EVENT_TYPES = ['b_start','b_inter','b_end'];
+const TASKLIKE_TYPES = ['b_task','b_subprocess'];
+const SMALL_TYPES = [...ROUND_TYPES, ...DIAMOND_TYPES];
+const LABEL_BELOW = ['b_start','b_inter','b_end','b_gw_x','b_gw_and','b_gw_or','b_gw_xe','b_gw_complex','b_store'];
+const EVENT_MARKERS = [
+  ['none','— (Blanko)'], ['message','Nachricht'], ['timer','Timer'], ['error','Fehler'],
+  ['escalation','Eskalation'], ['condition','Bedingung'], ['link','Link'],
+  ['signal','Signal'], ['cancel','Abbruch'], ['compensation','Kompensation'], ['terminate','Terminierung']
+];
+const TASK_MARKERS = [
+  ['none','— (abstrakt)'], ['user','Benutzer'], ['manual','Manuell'], ['service','Service'],
+  ['script','Skript'], ['business','Geschäftsregel'], ['send','Senden'], ['receive','Empfangen']
+];
+function sizeFor(type){
+  if (SMALL_TYPES.includes(type)) return [48,48];
+  if (type === 'b_task') return [160,58];
+  if (type === 'b_data') return [90,104];
+  if (type === 'b_store') return [96,90];
+  if (type === 'b_subprocess') return [180,90];
+  if (type === 'b_note') return [150,46];
+  if (type === 'b_group') return [320,220];
+  if (type === 'b_lane') return [640,170];
+  if (type === 'b_custom') return [120,90];
+  return [150,54];
+}
 
 function resize(){
   const dpr = window.devicePixelRatio || 1;
@@ -338,37 +565,158 @@ function snapshot(){ return JSON.stringify({nodes, connections}); }
 function save(){
   history.push(snapshot());
   if (history.length > MAX_HISTORY) history.shift();
+  redoStack = [];
 }
 function undo(){
   if (!history.length) return;
+  redoStack.push(snapshot());
   const s = JSON.parse(history.pop());
   nodes = s.nodes; connections = s.connections;
   selected = null; selectedConn = null;
   draw(); updateStats(); updateProps(); persist();
 }
 
+function redo(){
+  if (!redoStack.length) return;
+  history.push(snapshot());
+  const s = JSON.parse(redoStack.pop());
+  nodes = s.nodes; connections = s.connections;
+  selected = null; selectedConn = null;
+  draw(); updateStats(); updateProps(); persist();
+}
+
+let currentDocId = null;
+function docIndex(){ try { return JSON.parse(localStorage.getItem('floei-docs') || '[]'); } catch(e){ return []; } }
+function saveDocIndex(ix){ try { localStorage.setItem('floei-docs', JSON.stringify(ix)); } catch(e){} }
+
 function persist(){
   try {
-    localStorage.setItem(STORAGE_KEY, snapshot());
-    localStorage.setItem(STORAGE_KEY+'-name', document.getElementById('diagram-name').value);
+    if (!currentDocId) currentDocId = 'd' + Date.now();
+    const name = document.getElementById('diagram-name').value;
+    localStorage.setItem('floei-doc-' + currentDocId, JSON.stringify({name, nodes, connections}));
+    localStorage.setItem('floei-current', currentDocId);
+    const ix = docIndex().filter(d => d.id !== currentDocId);
+    ix.unshift({id: currentDocId, name: name || 'Unbenanntes Diagramm', updated: Date.now()});
+    saveDocIndex(ix);
   } catch(e){}
 }
+
+function loadDoc(id){
+  try {
+    const raw = localStorage.getItem('floei-doc-' + id);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    nodes = Array.isArray(s.nodes) ? s.nodes : [];
+    connections = Array.isArray(s.connections) ? s.connections : [];
+    document.getElementById('diagram-name').value = s.name || '';
+    nodes.forEach(n => { if (n.id >= idCounter) idCounter = n.id + 1; });
+    currentDocId = id;
+    localStorage.setItem('floei-current', id);
+    history = []; redoStack = [];
+    selected = null; selectedConn = null;
+    return true;
+  } catch(e){ return false; }
+}
+
+function newDoc(){
+  if (nodes.length) persist();
+  currentDocId = 'd' + Date.now();
+  nodes = []; connections = [];
+  document.getElementById('diagram-name').value = '';
+  history = []; redoStack = [];
+  selected = null; selectedConn = null;
+  persist(); draw(); updateStats(); updateProps();
+  document.getElementById('diagram-name').focus();
+}
+
 function restore(){
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw){
-      const s = JSON.parse(raw);
-      if (Array.isArray(s.nodes)){
-        nodes = s.nodes; connections = s.connections || [];
-        nodes.forEach(n => { if (n.id >= idCounter) idCounter = n.id + 1; });
-      }
+    // migrate legacy single-diagram storage
+    const legacy = localStorage.getItem(STORAGE_KEY);
+    if (legacy && !localStorage.getItem('floei-docs')){
+      const s = JSON.parse(legacy);
+      const id = 'd' + Date.now();
+      const nm = localStorage.getItem(STORAGE_KEY + '-name') || '';
+      localStorage.setItem('floei-doc-' + id, JSON.stringify({name: nm, nodes: s.nodes || [], connections: s.connections || []}));
+      saveDocIndex([{id, name: nm || 'Unbenanntes Diagramm', updated: Date.now()}]);
+      localStorage.setItem('floei-current', id);
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY + '-name');
     }
-    const name = localStorage.getItem(STORAGE_KEY+'-name');
-    if (name) document.getElementById('diagram-name').value = name;
-    const key = localStorage.getItem('floei-api-key');
+    // import shared link
+    if (location.hash.indexOf('#d=') === 0){
+      try {
+        const b64 = location.hash.slice(3).replace(/-/g,'+').replace(/_/g,'/');
+        const json = decodeURIComponent(escape(atob(b64)));
+        const s = JSON.parse(json);
+        if (Array.isArray(s.nodes)){
+          currentDocId = 'd' + Date.now();
+          nodes = s.nodes; connections = s.connections || [];
+          document.getElementById('diagram-name').value = (s.name ? s.name + ' ' : '') + '(geteilt)';
+          nodes.forEach(n => { if (n.id >= idCounter) idCounter = n.id + 1; });
+          persist();
+          try { history.replaceState ? null : null; } catch(e2){}
+          location.hash = '';
+          const key0 = (window.floeiNative && window.floeiNative.getKeySync()) || localStorage.getItem('floei-api-key');
+          if (key0) document.getElementById('api-key').value = key0;
+          return;
+        }
+      } catch(e2){}
+    }
+    const cur = localStorage.getItem('floei-current') || (docIndex()[0] || {}).id;
+    if (cur) loadDoc(cur);
+    const key = (window.floeiNative && window.floeiNative.getKeySync()) || localStorage.getItem('floei-api-key');
     if (key) document.getElementById('api-key').value = key;
   } catch(e){}
 }
+
+function renderDocMenu(){
+  const menu = document.getElementById('doc-menu');
+  menu.innerHTML = '';
+  const add = document.createElement('button');
+  add.textContent = '＋ Neues Diagramm';
+  add.onclick = () => { closeMenus(); newDoc(); };
+  menu.appendChild(add);
+  docIndex().forEach(d => {
+    const row = document.createElement('div');
+    row.className = 'menu-row';
+    const b = document.createElement('button');
+    b.textContent = (d.id === currentDocId ? '• ' : '') + (d.name || 'Unbenannt');
+    b.title = new Date(d.updated).toLocaleString('de-DE');
+    b.onclick = () => {
+      closeMenus();
+      if (d.id !== currentDocId){
+        if (nodes.length) persist();
+        if (loadDoc(d.id)){ draw(); updateStats(); updateProps(); updateZoomLabel(); }
+      }
+    };
+    const del = document.createElement('button');
+    del.className = 'del';
+    del.textContent = '✕';
+    del.title = 'Löschen';
+    del.onclick = (e) => {
+      e.stopPropagation();
+      if (!confirm('„' + (d.name || 'Unbenannt') + '" endgültig löschen?')) return;
+      localStorage.removeItem('floei-doc-' + d.id);
+      saveDocIndex(docIndex().filter(x => x.id !== d.id));
+      if (d.id === currentDocId){
+        currentDocId = null;
+        const nx = docIndex()[0];
+        if (nx) loadDoc(nx.id);
+        else { nodes = []; connections = []; document.getElementById('diagram-name').value = ''; persist(); }
+        draw(); updateStats(); updateProps();
+      }
+      renderDocMenu();
+    };
+    row.appendChild(b); row.appendChild(del);
+    menu.appendChild(row);
+  });
+}
+
+function closeMenus(){
+  document.querySelectorAll('.menu.open').forEach(m => m.classList.remove('open'));
+}
+
 document.getElementById('diagram-name').addEventListener('input', persist);
 
 function fileBase(){
@@ -390,7 +738,20 @@ function nodeAt(sx,sy){
   const w = screenToWorld(sx,sy);
   for (let i = nodes.length-1; i >= 0; i--){
     const n = nodes[i];
-    if (w.x >= n.x && w.x <= n.x+n.w && w.y >= n.y && w.y <= n.y+n.h) return n;
+    const inside = w.x >= n.x && w.x <= n.x+n.w && w.y >= n.y && w.y <= n.y+n.h;
+    if (!inside) continue;
+    if (n.type === 'b_lane'){
+      if (n.poolHeader) return n;
+      const m = 8/Math.max(zoom, 0.001);
+      if (w.x <= n.x + 30 || w.x >= n.x+n.w - m || w.y <= n.y + m || w.y >= n.y+n.h - m) return n;
+      continue;
+    }
+    if (n.type === 'b_group'){
+      const m = 10/Math.max(zoom, 0.001);
+      if (w.x <= n.x + m || w.x >= n.x+n.w - m || w.y <= n.y + m || w.y >= n.y+n.h - m) return n;
+      continue;
+    }
+    return n;
   }
   return null;
 }
@@ -419,10 +780,14 @@ function edgePoint(n, target){
   const tx = target.x+target.w/2, ty = target.y+target.h/2;
   const dx = tx-cx, dy = ty-cy;
   if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) return {x:cx, y:cy};
-  if (CONNECTOR_TYPES.includes(n.type)){
+  if (ROUND_TYPES.includes(n.type)){
     const r = Math.min(n.w,n.h)/2;
     const len = Math.hypot(dx,dy);
     return {x:cx+dx/len*r, y:cy+dy/len*r};
+  }
+  if (DIAMOND_TYPES.includes(n.type)){
+    const t = 1 / (Math.abs(dx)/(n.w/2) + Math.abs(dy)/(n.h/2));
+    return {x:cx+dx*t, y:cy+dy*t};
   }
   if (n.type === 'org'){
     const rx = n.w/2, ry = n.h/2;
@@ -454,18 +819,206 @@ function shapePath(tc, type, sx, sy, sw, sh, rmax){
     tc.ellipse(sx+sw/2,sy+sh/2,sw/2,sh/2,0,0,Math.PI*2);
   } else if (type==='info'){
     tc.rect(sx,sy,sw,sh);
+  } else if (type==='b_task'){
+    const r = Math.min(rmax*0.7, sh*0.22);
+    tc.moveTo(sx+r,sy); tc.lineTo(sx+sw-r,sy); tc.arcTo(sx+sw,sy,sx+sw,sy+r,r);
+    tc.lineTo(sx+sw,sy+sh-r); tc.arcTo(sx+sw,sy+sh,sx+sw-r,sy+sh,r);
+    tc.lineTo(sx+r,sy+sh); tc.arcTo(sx,sy+sh,sx,sy+sh-r,r);
+    tc.lineTo(sx,sy+r); tc.arcTo(sx,sy,sx+r,sy,r);
+    tc.closePath();
+  } else if (DIAMOND_TYPES.includes(type)){
+    tc.moveTo(sx+sw/2,sy); tc.lineTo(sx+sw,sy+sh/2); tc.lineTo(sx+sw/2,sy+sh); tc.lineTo(sx,sy+sh/2);
+    tc.closePath();
+  } else if (type==='b_data'){
+    const f = Math.min(sw,sh)*0.24;
+    tc.moveTo(sx,sy); tc.lineTo(sx+sw-f,sy); tc.lineTo(sx+sw,sy+f); tc.lineTo(sx+sw,sy+sh); tc.lineTo(sx,sy+sh);
+    tc.closePath();
   } else if (type==='dokument'){
     const cr = sh*0.22;
     tc.moveTo(sx,sy); tc.lineTo(sx+sw,sy); tc.lineTo(sx+sw,sy+sh-cr);
     tc.quadraticCurveTo(sx+sw*0.75, sy+sh-cr*2.2, sx+sw/2, sy+sh-cr);
     tc.quadraticCurveTo(sx+sw*0.25, sy+sh+cr*0.2, sx, sy+sh-cr);
     tc.closePath();
+  } else if (type==='b_subprocess'){
+    const r = Math.min(rmax*0.7, sh*0.22);
+    tc.moveTo(sx+r,sy); tc.lineTo(sx+sw-r,sy); tc.arcTo(sx+sw,sy,sx+sw,sy+r,r);
+    tc.lineTo(sx+sw,sy+sh-r); tc.arcTo(sx+sw,sy+sh,sx+sw-r,sy+sh,r);
+    tc.lineTo(sx+r,sy+sh); tc.arcTo(sx,sy+sh,sx,sy+sh-r,r);
+    tc.lineTo(sx,sy+r); tc.arcTo(sx,sy,sx+r,sy,r);
+    tc.closePath();
+  } else if (type==='b_store'){
+    const ry = sh*0.16;
+    tc.moveTo(sx, sy+ry); tc.lineTo(sx, sy+sh-ry);
+    tc.ellipse(sx+sw/2, sy+sh-ry, sw/2, ry, 0, Math.PI, 0, true);
+    tc.lineTo(sx+sw, sy+ry);
+    tc.ellipse(sx+sw/2, sy+ry, sw/2, ry, 0, 0, Math.PI*2);
+  } else if (type==='b_group'){
+    const r = 10;
+    tc.moveTo(sx+r,sy); tc.lineTo(sx+sw-r,sy); tc.arcTo(sx+sw,sy,sx+sw,sy+r,r);
+    tc.lineTo(sx+sw,sy+sh-r); tc.arcTo(sx+sw,sy+sh,sx+sw-r,sy+sh,r);
+    tc.lineTo(sx+r,sy+sh); tc.arcTo(sx,sy+sh,sx,sy+sh-r,r);
+    tc.lineTo(sx,sy+r); tc.arcTo(sx,sy,sx+r,sy,r);
+    tc.closePath();
+  } else if (type==='b_custom'){
+    const cx0=sx+sw/2, cy0=sy+sh/2, n=12, ro=Math.min(sw,sh)/2, ri=ro*0.74;
+    for (let i=0;i<n*2;i++){ const rr=i%2?ri:ro; const a=i*Math.PI/n - Math.PI/2; const fn=i?'lineTo':'moveTo'; tc[fn](cx0+Math.cos(a)*(sw/2/ro*rr), cy0+Math.sin(a)*(sh/2/ro*rr)); }
+    tc.closePath();
+  } else if (type==='b_lane'){
+    tc.rect(sx,sy,sw,sh);
+  } else if (type==='b_note'){
+    const b = Math.min(sw*0.12, 16);
+    tc.moveTo(sx+b,sy); tc.lineTo(sx,sy); tc.lineTo(sx,sy+sh); tc.lineTo(sx+b,sy+sh);
   } else {
     tc.arc(sx+sw/2,sy+sh/2,Math.min(sw,sh)/2,0,Math.PI*2);
   }
 }
 
-function decorateNode(tc, type, sx, sy, sw, sh){
+// BPMN marker glyphs drawn inside events (and as task corner icons).
+// Each draws within a unit box centred at (0,0), scaled by caller.
+function drawMarker(tc, marker, cx, cy, r, color, filled){
+  if (!marker || marker === 'none') return;
+  tc.save();
+  tc.strokeStyle = color; tc.fillStyle = filled ? color : 'transparent';
+  tc.lineWidth = Math.max(1, r*0.13);
+  tc.lineJoin = 'round'; tc.lineCap = 'round';
+  const s = r;
+  if (marker === 'message'){
+    const w = s*1.15, h = s*0.78;
+    tc.strokeRect(cx-w/2, cy-h/2, w, h);
+    tc.beginPath(); tc.moveTo(cx-w/2, cy-h/2); tc.lineTo(cx, cy+h*0.12); tc.lineTo(cx+w/2, cy-h/2); tc.stroke();
+  } else if (marker === 'timer'){
+    tc.beginPath(); tc.arc(cx, cy, s*0.82, 0, Math.PI*2); tc.stroke();
+    tc.beginPath(); tc.moveTo(cx, cy-s*0.55); tc.lineTo(cx, cy); tc.lineTo(cx+s*0.4, cy+s*0.25); tc.stroke();
+    for (let i=0;i<12;i++){ const a=i*Math.PI/6; tc.beginPath(); tc.moveTo(cx+Math.cos(a)*s*0.82, cy+Math.sin(a)*s*0.82); tc.lineTo(cx+Math.cos(a)*s*0.66, cy+Math.sin(a)*s*0.66); tc.stroke(); }
+  } else if (marker === 'signal'){
+    tc.beginPath(); tc.moveTo(cx, cy-s*0.85); tc.lineTo(cx+s*0.8, cy+s*0.6); tc.lineTo(cx-s*0.8, cy+s*0.6); tc.closePath();
+    if (filled) tc.fill(); else tc.stroke();
+  } else if (marker === 'error'){
+    tc.beginPath();
+    tc.moveTo(cx-s*0.7, cy+s*0.7); tc.lineTo(cx-s*0.15, cy-s*0.2); tc.lineTo(cx+s*0.2, cy+s*0.25); tc.lineTo(cx+s*0.7, cy-s*0.7);
+    if (filled){ tc.lineTo(cx+s*0.3, cy-s*0.7); tc.lineTo(cx+s*0.02, cy-s*0.05); tc.lineTo(cx-s*0.25, cy-s*0.45); tc.lineTo(cx-s*0.7, cy+s*0.4); tc.closePath(); tc.fill(); }
+    else tc.stroke();
+  } else if (marker === 'escalation'){
+    tc.beginPath(); tc.moveTo(cx, cy-s*0.85); tc.lineTo(cx+s*0.55, cy+s*0.6); tc.lineTo(cx, cy+s*0.05); tc.lineTo(cx-s*0.55, cy+s*0.6); tc.closePath();
+    if (filled) tc.fill(); else tc.stroke();
+  } else if (marker === 'condition'){
+    const w=s*1.1, h=s*1.2;
+    tc.strokeRect(cx-w/2, cy-h/2, w, h);
+    for (let i=0;i<3;i++){ const yy=cy-h*0.28+i*h*0.28; tc.beginPath(); tc.moveTo(cx-w*0.32, yy); tc.lineTo(cx+w*0.32, yy); tc.stroke(); }
+  } else if (marker === 'link'){
+    tc.beginPath(); tc.moveTo(cx-s*0.7, cy-s*0.35); tc.lineTo(cx+s*0.15, cy-s*0.35); tc.lineTo(cx+s*0.15, cy-s*0.6); tc.lineTo(cx+s*0.8, cy); tc.lineTo(cx+s*0.15, cy+s*0.6); tc.lineTo(cx+s*0.15, cy+s*0.35); tc.lineTo(cx-s*0.7, cy+s*0.35); tc.closePath();
+    if (filled) tc.fill(); else tc.stroke();
+  } else if (marker === 'cancel'){
+    tc.beginPath(); tc.moveTo(cx-s*0.6,cy-s*0.6); tc.lineTo(cx+s*0.6,cy+s*0.6); tc.moveTo(cx+s*0.6,cy-s*0.6); tc.lineTo(cx-s*0.6,cy+s*0.6);
+    if (filled){ tc.lineWidth=r*0.3; } tc.stroke();
+  } else if (marker === 'compensation'){
+    tc.beginPath(); tc.moveTo(cx-s*0.1, cy-s*0.6); tc.lineTo(cx-s*0.8, cy); tc.lineTo(cx-s*0.1, cy+s*0.6); tc.closePath();
+    tc.moveTo(cx+s*0.7, cy-s*0.6); tc.lineTo(cx, cy); tc.lineTo(cx+s*0.7, cy+s*0.6); tc.closePath();
+    if (filled) tc.fill(); else tc.stroke();
+  } else if (marker === 'terminate'){
+    tc.beginPath(); tc.arc(cx, cy, s*0.78, 0, Math.PI*2); tc.fillStyle = color; tc.fill();
+  } else if (marker === 'send'){
+    const w=s*1.15,h=s*0.78; tc.fillStyle=color; tc.fillRect(cx-w/2,cy-h/2,w,h);
+    tc.strokeStyle = '#10141a'; tc.lineWidth=Math.max(0.8,r*0.1);
+    tc.beginPath(); tc.moveTo(cx-w/2,cy-h/2); tc.lineTo(cx,cy+h*0.12); tc.lineTo(cx+w/2,cy-h/2); tc.stroke();
+  } else if (marker === 'user'){
+    tc.beginPath(); tc.arc(cx, cy-s*0.35, s*0.42, 0, Math.PI*2); tc.stroke();
+    tc.beginPath(); tc.arc(cx, cy+s*0.95, s*0.72, Math.PI*1.15, Math.PI*1.85); tc.stroke();
+  } else if (marker === 'manual'){
+    tc.beginPath(); tc.moveTo(cx-s*0.8,cy+s*0.3); tc.lineTo(cx-s*0.2,cy+s*0.3); tc.lineTo(cx+s*0.1,cy-s*0.1); tc.lineTo(cx+s*0.8,cy-s*0.1); tc.lineTo(cx+s*0.8,cy+s*0.25); tc.lineTo(cx-s*0.2,cy+s*0.55); tc.lineTo(cx-s*0.8,cy+s*0.55); tc.closePath(); tc.stroke();
+  } else if (marker === 'service'){
+    const teeth=8, ro=s*0.78, ri=s*0.5;
+    tc.beginPath();
+    for (let i=0;i<teeth*2;i++){ const rr=i%2?ri:ro; const a=i*Math.PI/teeth; const fn=i?'lineTo':'moveTo'; tc[fn](cx+Math.cos(a)*rr, cy+Math.sin(a)*rr);} tc.closePath(); tc.stroke();
+    tc.beginPath(); tc.arc(cx,cy,s*0.26,0,Math.PI*2); tc.stroke();
+  } else if (marker === 'script'){
+    const w=s*0.9,h=s*1.05;
+    tc.beginPath(); tc.moveTo(cx-w/2+s*0.18,cy-h/2); tc.quadraticCurveTo(cx-w/2-s*0.12,cy-h/2+s*0.3,cx-w/2+s*0.05,cy);
+    tc.quadraticCurveTo(cx-w/2+s*0.22,cy+h/2-s*0.3,cx-w/2-s*0.05,cy+h/2);
+    tc.lineTo(cx+w/2-s*0.18,cy+h/2);
+    tc.quadraticCurveTo(cx+w/2+s*0.12,cy+h/2-s*0.3,cx+w/2-s*0.05,cy);
+    tc.quadraticCurveTo(cx+w/2-s*0.22,cy-h/2+s*0.3,cx+w/2+s*0.05,cy-h/2); tc.closePath(); tc.stroke();
+    for (let i=0;i<3;i++){ const yy=cy-h*0.22+i*h*0.22; tc.beginPath(); tc.moveTo(cx-w*0.22,yy); tc.lineTo(cx+w*0.18,yy); tc.stroke(); }
+  } else if (marker === 'business'){
+    const w=s*1.1,h=s*0.9;
+    tc.strokeRect(cx-w/2,cy-h/2,w,h);
+    tc.beginPath(); tc.moveTo(cx-w/2,cy-h*0.16); tc.lineTo(cx+w/2,cy-h*0.16); tc.moveTo(cx-w*0.16,cy-h/2); tc.lineTo(cx-w*0.16,cy+h/2); tc.stroke();
+  } else if (marker === 'receive'){
+    const w=s*1.15,h=s*0.78; tc.strokeRect(cx-w/2,cy-h/2,w,h);
+    tc.beginPath(); tc.moveTo(cx-w/2,cy-h/2); tc.lineTo(cx,cy+h*0.12); tc.lineTo(cx+w/2,cy-h/2); tc.stroke();
+  }
+  tc.restore();
+}
+
+// sub-process / task sub-markers shown at the bottom-centre
+function drawActivityMarkers(tc, n, sx, sy, sw, sh, color){
+  const ms = [];
+  if (n.type === 'b_subprocess' || n.collapsed) ms.push('plus');
+  if (n.loop === 'standard') ms.push('loop');
+  if (n.loop === 'parallel') ms.push('par');
+  if (n.loop === 'sequential') ms.push('seq');
+  if (n.adhoc) ms.push('adhoc');
+  if (n.compensation) ms.push('comp');
+  if (!ms.length) return;
+  const k = Math.min(sh*0.16, 9*zoomScaleHint(tc));
+  let bx = sx + sw/2 - (ms.length*k*1.6)/2 + k*0.8;
+  const by = sy + sh - k - 2;
+  tc.save(); tc.strokeStyle = color; tc.fillStyle = color; tc.lineWidth = Math.max(1, k*0.18);
+  ms.forEach(m => {
+    if (m === 'plus'){ tc.strokeRect(bx-k/2,by-k/2,k,k); tc.beginPath(); tc.moveTo(bx,by-k*0.32); tc.lineTo(bx,by+k*0.32); tc.moveTo(bx-k*0.32,by); tc.lineTo(bx+k*0.32,by); tc.stroke(); }
+    else if (m === 'loop'){ tc.beginPath(); tc.arc(bx,by,k*0.5,Math.PI*0.4,Math.PI*1.9); tc.stroke(); tc.beginPath(); tc.moveTo(bx+k*0.45,by-k*0.25); tc.lineTo(bx+k*0.55,by+k*0.05); tc.lineTo(bx+k*0.2,by+k*0.05); tc.closePath(); tc.fill(); }
+    else if (m === 'par'){ for(let i=-1;i<2;i++){ tc.beginPath(); tc.moveTo(bx+i*k*0.3,by-k*0.4); tc.lineTo(bx+i*k*0.3,by+k*0.4); tc.stroke(); } }
+    else if (m === 'seq'){ for(let i=-1;i<2;i++){ tc.beginPath(); tc.moveTo(bx-k*0.4,by+i*k*0.3); tc.lineTo(bx+k*0.4,by+i*k*0.3); tc.stroke(); } }
+    else if (m === 'adhoc'){ tc.beginPath(); tc.moveTo(bx-k*0.45,by); tc.quadraticCurveTo(bx-k*0.15,by-k*0.45,bx,by); tc.quadraticCurveTo(bx+k*0.15,by+k*0.45,bx+k*0.45,by); tc.stroke(); }
+    else if (m === 'comp'){ drawMarker(tc,'compensation',bx,by,k*0.6,color,true); }
+    bx += k*1.6;
+  });
+  tc.restore();
+}
+function zoomScaleHint(tc){ return (typeof zoom !== 'undefined' && tc === ctx) ? zoom : 1; }
+
+function decorateNode(tc, type, sx, sy, sw, sh, node){
+  const cx2 = sx+sw/2, cy2 = sy+sh/2;
+  if (type === 'b_inter'){
+    const rr = Math.min(sw,sh)/2;
+    if (node && node.behavior === 'nonint') tc.setLineDash([4,3]);
+    tc.beginPath(); tc.arc(cx2, cy2, rr*0.78, 0, Math.PI*2); tc.stroke();
+    tc.setLineDash([]);
+  }
+  if (type === 'b_gw_x'){
+    const k = Math.min(sw,sh)*0.17;
+    tc.beginPath(); tc.moveTo(cx2-k,cy2-k); tc.lineTo(cx2+k,cy2+k); tc.moveTo(cx2+k,cy2-k); tc.lineTo(cx2-k,cy2+k); tc.stroke();
+  }
+  if (type === 'b_gw_and'){
+    const k = Math.min(sw,sh)*0.22;
+    tc.beginPath(); tc.moveTo(cx2-k,cy2); tc.lineTo(cx2+k,cy2); tc.moveTo(cx2,cy2-k); tc.lineTo(cx2,cy2+k); tc.stroke();
+  }
+  if (type === 'b_gw_or'){
+    tc.beginPath(); tc.arc(cx2, cy2, Math.min(sw,sh)*0.19, 0, Math.PI*2); tc.stroke();
+  }
+  if (type === 'b_data'){
+    const f = Math.min(sw,sh)*0.24;
+    tc.beginPath(); tc.moveTo(sx+sw-f, sy); tc.lineTo(sx+sw-f, sy+f); tc.lineTo(sx+sw, sy+f); tc.stroke();
+    const v = node && node.variant;
+    if (v === 'input' || v === 'output'){
+      // small arrow top-left: hollow = input, filled = output
+      const ax = sx+sw*0.16, ay = sy+sh*0.20, aw = sw*0.32, ah = sh*0.14;
+      tc.save(); tc.lineWidth = Math.max(1, sw*0.025);
+      tc.beginPath();
+      tc.moveTo(ax, ay); tc.lineTo(ax+aw*0.62, ay); tc.lineTo(ax+aw*0.62, ay-ah*0.5);
+      tc.lineTo(ax+aw, ay+ah*0.5); tc.lineTo(ax+aw*0.62, ay+ah*1.5); tc.lineTo(ax+aw*0.62, ay+ah);
+      tc.lineTo(ax, ay+ah); tc.closePath();
+      if (v === 'output'){ tc.fillStyle = tc.strokeStyle; tc.fill(); } else { tc.stroke(); }
+      tc.restore();
+    }
+    if (v === 'collection'){
+      // three vertical bars at the bottom centre
+      const by = sy+sh-sh*0.18, bh = sh*0.16, cx0 = sx+sw/2;
+      tc.save(); tc.lineWidth = Math.max(1.4, sw*0.04);
+      for (let i=-1;i<2;i++){ tc.beginPath(); tc.moveTo(cx0+i*sw*0.12, by); tc.lineTo(cx0+i*sw*0.12, by+bh); tc.stroke(); }
+      tc.restore();
+    }
+  }
   if (type === 'xor'){
     const r = Math.min(sw,sh)/2 * 0.72;
     tc.beginPath(); tc.arc(sx+sw/2, sy+sh/2, r, 0, Math.PI*2); tc.stroke();
@@ -478,8 +1031,60 @@ function decorateNode(tc, type, sx, sy, sw, sh){
     tc.lineTo(cx - rx*0.72, cy + ry*Math.sin(ang));
     tc.stroke();
   }
+  if (type === 'b_gw_xe'){
+    const rr = Math.min(sw,sh)*0.30;
+    const instantiate = node && node.instantiate;
+    const parallel = node && node.gwparallel;
+    tc.beginPath(); tc.arc(cx2,cy2,rr,0,Math.PI*2); tc.stroke();
+    if (!instantiate){ tc.beginPath(); tc.arc(cx2,cy2,rr*0.72,0,Math.PI*2); tc.stroke(); }
+    if (parallel){
+      const k=rr*0.55; tc.beginPath(); tc.moveTo(cx2-k,cy2); tc.lineTo(cx2+k,cy2); tc.moveTo(cx2,cy2-k); tc.lineTo(cx2,cy2+k); tc.stroke();
+    } else {
+      const k=rr*0.5; tc.beginPath();
+      tc.moveTo(cx2,cy2-k); tc.lineTo(cx2+k*0.95,cy2-k*0.3); tc.lineTo(cx2+k*0.6,cy2+k*0.8); tc.lineTo(cx2-k*0.6,cy2+k*0.8); tc.lineTo(cx2-k*0.95,cy2-k*0.3); tc.closePath(); tc.stroke();
+    }
+  }
+  if (type === 'b_gw_complex'){
+    const k = Math.min(sw,sh)*0.28;
+    tc.beginPath();
+    tc.moveTo(cx2-k,cy2); tc.lineTo(cx2+k,cy2); tc.moveTo(cx2,cy2-k); tc.lineTo(cx2,cy2+k);
+    tc.moveTo(cx2-k*0.7,cy2-k*0.7); tc.lineTo(cx2+k*0.7,cy2+k*0.7); tc.moveTo(cx2+k*0.7,cy2-k*0.7); tc.lineTo(cx2-k*0.7,cy2+k*0.7);
+    tc.stroke();
+  }
+  if (type === 'b_store'){
+    tc.beginPath();
+    tc.ellipse(cx2, sy+sh*0.16, sw/2, sh*0.16, 0, 0, Math.PI*2); tc.stroke();
+  }
+  // non-interrupting events: dashed outer ring (start & intermediate)
+  if (node && (type === 'b_start' || type === 'b_inter') && node.behavior === 'nonint'){
+    const rr = Math.min(sw,sh)/2;
+    tc.save(); tc.setLineDash([4,3]);
+    tc.beginPath(); tc.arc(cx2, cy2, rr, 0, Math.PI*2); tc.stroke();
+    tc.restore();
+  }
+  // event markers
+  if (node && EVENT_TYPES.includes(type) && node.marker && node.marker !== 'none'){
+    const r = Math.min(sw,sh)/2;
+    const filled = (type === 'b_end') || ((type === 'b_inter' || type === 'b_start') && node.throwing);
+    drawMarker(tc, node.marker, cx2, cy2, r*0.52, tc.strokeStyle, filled);
+  }
+  // task corner icon
+  if (node && TASKLIKE_TYPES.includes(type) && node.marker && node.marker !== 'none'){
+    const k = Math.min(sh*0.34, 13*(tc===ctx?zoom:1));
+    drawMarker(tc, node.marker, sx + k*0.9 + 3, sy + k*0.7 + 3, k*0.5, tc.strokeStyle, node.marker==='send');
+  }
+  // activity sub-markers (loop, parallel, sub-process +, ad-hoc, compensation)
+  if (node && TASKLIKE_TYPES.includes(type)) drawActivityMarkers(tc, node, sx, sy, sw, sh, tc.strokeStyle);
 }
 
+function textInset(type){
+  // fraction of width usable for text, accounting for slanted/pointed shapes
+  if (type === 'ereignis' || type === 'prozess') return 0.68;   // hexagon points
+  if (DIAMOND_TYPES.includes(type)) return 0.6;                 // diamond
+  if (type === 'org' || (typeof CONNECTOR_TYPES!=='undefined' && CONNECTOR_TYPES.includes(type))) return 0.74; // ellipse/circle
+  if (type === 'dokument' || type === 'b_data') return 0.78;
+  return 0.84;                                                  // rect-like
+}
 function wrapText(tc, txt, maxW, fs){
   if (tc.measureText(txt).width <= maxW || !txt.includes(' ')) return [txt];
   const words = txt.split(' ');
@@ -510,7 +1115,7 @@ function drawNode(n){
 
   shapePath(ctx, n.type, s.x, s.y, sw, sh, 14*zoom);
   ctx.fillStyle = c.fill;
-  if (themeName === 'dark'){
+  if (themeName === 'dark' && n.type !== 'b_lane' && n.type !== 'b_note' && n.type !== 'b_group'){
     ctx.save();
     ctx.shadowColor = c.stroke + '50';
     ctx.shadowBlur = 18 * Math.min(zoom, 1.5);
@@ -520,24 +1125,54 @@ function drawNode(n){
     ctx.fill();
   }
   ctx.strokeStyle = isSel || isConnSrc ? T().selStroke : c.stroke;
-  ctx.lineWidth = (isSel || isConnSrc ? 2.2 : 1.5) * Math.min(zoom, 1.4);
-  if (n.type === 'prozess') ctx.setLineDash([5*zoom, 3*zoom]);
+  const baseLw = (n.type === 'b_end' || (n.type==='b_inter' && n.boundaryThrow)) ? 3 : 1.5;
+  ctx.lineWidth = (isSel || isConnSrc ? Math.max(2.2, baseLw) : baseLw) * Math.min(zoom, 1.4);
+  if (n.type === 'prozess' || n.type === 'b_group' || (n.type==='b_subprocess' && n.eventSub) || (n.type==='b_inter' && n.nonInterrupting))
+    ctx.setLineDash([6*zoom, 4*zoom]);
   ctx.stroke();
   ctx.setLineDash([]);
-  decorateNode(ctx, n.type, s.x, s.y, sw, sh);
+  decorateNode(ctx, n.type, s.x, s.y, sw, sh, n);
 
-  const fs = Math.max(9, Math.min(14, 11.5*zoom));
-  ctx.fillStyle = c.stroke;
-  ctx.font = fs + 'px "Segoe UI", system-ui, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const txt = n.label || LABELS[n.type];
-  const maxW = sw * 0.82;
-  const lines = wrapText(ctx, txt, maxW, fs);
-  const lh = fs * 1.18;
-  const startY = s.y + sh/2 - (lines.length-1)*lh/2;
-  lines.forEach((l,i) => ctx.fillText(l, s.x+sw/2, startY + i*lh, maxW));
+  if (n.type === 'b_lane'){
+    if (n.poolHeader){
+      ctx.fillStyle = c.stroke;
+      ctx.font = '600 ' + Math.max(10, Math.min(14, 12*zoom)) + 'px "Segoe UI", system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(n.label || 'Pool', s.x + sw/2, s.y + sh/2, sw*0.95);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(s.x + 26*zoom, s.y);
+      ctx.lineTo(s.x + 26*zoom, s.y + sh);
+      ctx.stroke();
+      ctx.save();
+      ctx.translate(s.x + 14*zoom, s.y + sh/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillStyle = c.stroke;
+      ctx.font = Math.max(9, Math.min(13, 11*zoom)) + 'px "Segoe UI", system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(n.label || 'Lane', 0, 0, sh*0.9);
+      ctx.restore();
+    }
+  } else {
+    const fs = Math.max(9, Math.min(14, 11.5*zoom));
+    ctx.fillStyle = c.stroke;
+    ctx.font = fs + 'px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const txt = n.label || LABELS[n.type];
+    if (txt){
+      if (LABEL_BELOW.includes(n.type)){
+        ctx.fillText(txt, s.x+sw/2, s.y+sh + 11*Math.max(zoom,0.7), 170*zoom);
+      } else {
+        const maxW = sw * textInset(n.type);
+        const lines = wrapText(ctx, txt, maxW, fs);
+        const lh = fs * 1.18;
+        const startY = s.y + sh/2 - (lines.length-1)*lh/2;
+        lines.forEach((l,i) => ctx.fillText(l, s.x+sw/2, startY + i*lh, maxW));
+      }
+    }
 
+  }
   if (isSel){
     ctx.strokeStyle = T().selStroke;
     ctx.lineWidth = 1;
@@ -547,26 +1182,57 @@ function drawNode(n){
   }
 }
 
-function drawArrowScreen(x1,y1,x2,y2,isSel){
+function drawArrowScreen(x1,y1,x2,y2,isSel,style){
   const dx = x2-x1, dy = y2-y1, len = Math.hypot(dx,dy);
   if (len < 2) return;
   const ux = dx/len, uy = dy/len;
   const headLen = 11, headW = 5.5;
   const ex = x2 - ux*2, ey = y2 - uy*2;
   const col = isSel ? T().selStroke : T().arrow;
+  ctx.save();
+  if (style === 'message') ctx.setLineDash([7,5]);
+  else if (style === 'assoc') ctx.setLineDash([3,4]);
   ctx.strokeStyle = col;
   ctx.lineWidth = isSel ? 2.2 : 1.4;
+  // line start offset for conditional (diamond sits at the start)
+  let lx = x1, ly = y1;
+  if (style === 'conditional'){ lx = x1 + ux*13; ly = y1 + uy*13; }
   ctx.beginPath();
-  ctx.moveTo(x1,y1);
-  ctx.lineTo(ex - ux*headLen*0.6, ey - uy*headLen*0.6);
+  ctx.moveTo(lx,ly);
+  ctx.lineTo(style === 'assoc' ? x2 : ex - ux*headLen*0.6, style === 'assoc' ? y2 : ey - uy*headLen*0.6);
   ctx.stroke();
-  ctx.fillStyle = col;
-  ctx.beginPath();
-  ctx.moveTo(ex, ey);
-  ctx.lineTo(ex - ux*headLen - uy*headW, ey - uy*headLen + ux*headW);
-  ctx.lineTo(ex - ux*headLen + uy*headW, ey - uy*headLen - ux*headW);
-  ctx.closePath();
-  ctx.fill();
+  // default flow: small slash near the start
+  if (style === 'default'){
+    const px = x1 + ux*9, py = y1 + uy*9, s = 5;
+    ctx.beginPath();
+    ctx.moveTo(px - ux*s - uy*s, py - uy*s + ux*s);
+    ctx.lineTo(px + ux*s + uy*s, py + uy*s - ux*s);
+    ctx.stroke();
+  }
+  // conditional flow: small diamond at the start
+  if (style === 'conditional'){
+    const k = 6;
+    ctx.fillStyle = T().canvasBg;
+    ctx.beginPath();
+    ctx.moveTo(x1 + ux*k, y1 + uy*k);
+    ctx.lineTo(x1 + ux*k*0.0 - uy*k*0.6 + ux*k, y1 + uy*k*0.0 + ux*k*0.6 + uy*k);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 + ux*k - uy*k*0.6, y1 + uy*k + ux*k*0.6);
+    ctx.lineTo(x1 + ux*k*2, y1 + uy*k*2);
+    ctx.lineTo(x1 + ux*k + uy*k*0.6, y1 + uy*k - ux*k*0.6);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+  }
+  ctx.restore();
+  if (style !== 'assoc'){
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - ux*headLen - uy*headW, ey - uy*headLen + ux*headW);
+    ctx.lineTo(ex - ux*headLen + uy*headW, ey - uy*headLen - ux*headW);
+    ctx.closePath();
+    ctx.fill();
+  }
 }
 
 function draw(){
@@ -595,12 +1261,25 @@ function draw(){
     }
   }
 
+  nodes.forEach(n => { if (n.type === 'b_lane' || n.type === 'b_group') drawNode(n); });
+
   connections.forEach(c => {
     const f = nodes.find(n=>n.id===c.from), t = nodes.find(n=>n.id===c.to);
     if (!f || !t) return;
     const a = edgePoint(f,t), b = edgePoint(t,f);
     const sa = worldToScreen(a.x,a.y), sb = worldToScreen(b.x,b.y);
-    drawArrowScreen(sa.x,sa.y,sb.x,sb.y, selectedConn===c);
+    drawArrowScreen(sa.x,sa.y,sb.x,sb.y, selectedConn===c, c.style);
+    if (c.label){
+      const mx2 = (sa.x+sb.x)/2, my2 = (sa.y+sb.y)/2;
+      const fs2 = Math.max(9, Math.min(13, 10.5*zoom));
+      ctx.font = fs2 + 'px "Segoe UI", system-ui, sans-serif';
+      const tw = ctx.measureText(c.label).width;
+      ctx.fillStyle = T().canvasBg;
+      ctx.fillRect(mx2 - tw/2 - 4, my2 - fs2/2 - 3, tw + 8, fs2 + 6);
+      ctx.fillStyle = selectedConn===c ? T().selStroke : T().arrow;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(c.label, mx2, my2);
+    }
   });
 
   if (connectMode && connectFrom){
@@ -613,7 +1292,7 @@ function draw(){
     ctx.setLineDash([]);
   }
 
-  nodes.forEach(drawNode);
+  nodes.forEach(n => { if (n.type !== 'b_lane' && n.type !== 'b_group') drawNode(n); });
 }
 
 // ---------- pointer events ----------
@@ -637,7 +1316,8 @@ canvas.addEventListener('pointerdown', e => {
         const dup = connections.some(c => c.from===connectFrom.id && c.to===hit.id);
         if (!dup){
           save();
-          connections.push({from:connectFrom.id, to:hit.id});
+          const st = (connectFrom.type === 'b_note' || hit.type === 'b_note') ? 'assoc' : undefined;
+          connections.push(st ? {from:connectFrom.id, to:hit.id, style:st} : {from:connectFrom.id, to:hit.id});
           persist();
         } else toast('Verbindung existiert bereits');
         connectFrom = null;
@@ -662,14 +1342,22 @@ canvas.addEventListener('pointerdown', e => {
       selected = clone;
     } else {
       selected = hit;
-      nodes.splice(nodes.indexOf(hit),1);
-      nodes.push(hit);
+      if (hit.type !== 'b_lane' && hit.type !== 'b_group'){
+        nodes.splice(nodes.indexOf(hit),1);
+        nodes.push(hit);
+      }
     }
     const s = worldToScreen(selected.x, selected.y);
     dragOffX = mx - s.x;
     dragOffY = my - s.y;
     dragging = selected;
     dragMoved = false;
+    dragStartX = selected.x; dragStartY = selected.y;
+    if (selected.type === 'b_lane' || selected.type === 'b_group'){
+      dragPassengers = nodesInside(selected).map(n => ({n, ox:n.x - selected.x, oy:n.y - selected.y}));
+    } else {
+      dragPassengers = [];
+    }
     draw(); updateProps(); updateStats();
   } else {
     const hitConn = connAt(mx,my);
@@ -698,6 +1386,9 @@ canvas.addEventListener('pointermove', e => {
   if (dragging && e.pointerId === activePointer){
     dragging.x = (mx - dragOffX - panX)/zoom;
     dragging.y = (my - dragOffY - panY)/zoom;
+    if (dragPassengers.length){
+      for (const p of dragPassengers){ p.n.x = dragging.x + p.ox; p.n.y = dragging.y + p.oy; }
+    }
     dragMoved = true;
     draw();
     return;
@@ -719,6 +1410,7 @@ canvas.addEventListener('pointerup', () => {
   if (dragging && dragMoved) persist();
   if (dragging && !dragMoved && history.length) history.pop();
   dragging = null;
+  dragPassengers = [];
   panning = false;
   activePointer = null;
 });
@@ -823,8 +1515,11 @@ document.addEventListener('keydown', e => {
     const [dx,dy] = arrows[e.key];
     if (selected){
       const step = e.shiftKey ? 1 : 10;
+      let pax = [];
+      if (selected.type === 'b_lane' || selected.type === 'b_group') pax = nodesInside(selected);
       selected.x += dx*step;
       selected.y += dy*step;
+      pax.forEach(n => { n.x += dx*step; n.y += dy*step; });
       persist();
     } else {
       const step = e.shiftKey ? 160 : 50;
@@ -842,9 +1537,14 @@ document.addEventListener('keydown', e => {
     canvas.style.cursor = 'default';
     selected = null; selectedConn = null;
     closeModal();
+    closeMenus();
+    document.getElementById('check-bg').style.display = 'none';
+    document.getElementById('train-bg').style.display = 'none';
+    document.getElementById('pool-bg').style.display = 'none';
     draw(); updateProps();
   }
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z'){ e.preventDefault(); undo(); }
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z'){ e.preventDefault(); undo(); }
+  if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))){ e.preventDefault(); redo(); }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); persist(); toast('Gespeichert ✓'); }
 });
 
@@ -859,6 +1559,65 @@ document.getElementById('prop-h').addEventListener('input', function(){
   if (selected){ selected.h = +this.value; document.getElementById('prop-h-lbl').textContent = this.value; persist(); draw(); }
 });
 
+function renderBpmnProps(n){
+  const box = document.getElementById('bpmn-props');
+  if (!box) return;
+  let html2 = '';
+  const sel2 = (id, opts, cur) => {
+    let s = '<select id="' + id + '" class="prop-val">';
+    opts.forEach(([v,l]) => { s += '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + l + '</option>'; });
+    return s + '</select>';
+  };
+  const chk = (id, label2, on) => '<label style="display:flex;gap:7px;align-items:center;font-size:11.5px;color:var(--text);margin-bottom:6px;cursor:pointer"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + ' style="accent-color:var(--accent);cursor:pointer"> ' + label2 + '</label>';
+
+  if (EVENT_TYPES.includes(n.type)){
+    html2 += '<div class="prop-lbl" style="margin-top:4px">Ereignis-Typ</div>' + sel2('bp-marker', EVENT_MARKERS, n.marker || 'none');
+    if (n.type === 'b_start' || n.type === 'b_inter'){
+      html2 += '<div class="prop-lbl" style="margin-top:12px">Verhalten</div>' +
+        sel2('bp-behavior', [['int','Unterbrechend (durchgezogen)'],['nonint','Nicht-unterbrechend (gestrichelt)']], n.behavior || 'int');
+      html2 += '<div style="height:8px"></div>' + chk('bp-throwing', 'Werfend (gefüllt)', n.throwing);
+    }
+  } else if (n.type === 'b_gw_xe'){
+    html2 += '<div class="prop-lbl" style="margin-top:4px">Gateway-Variante</div>' +
+      chk('bp-instantiate', 'Instanziierung (Einfachring)', n.instantiate) +
+      chk('bp-gwpar', 'Parallel (+ statt Pentagon)', n.gwparallel);
+  } else if (n.type === 'b_data'){
+    html2 += '<div class="prop-lbl" style="margin-top:4px">Daten-Variante</div>' +
+      sel2('bp-variant', [['plain','Datenobjekt'],['input','Dateninput (Pfeil hohl)'],['output','Datenoutput (Pfeil gefüllt)'],['collection','Listen-Objekt (‖)']], n.variant || 'plain');
+  } else if (TASKLIKE_TYPES.includes(n.type)){
+    html2 += '<div class="prop-lbl" style="margin-top:4px">Aufgaben-Typ</div>' + sel2('bp-marker', TASK_MARKERS, n.marker || 'none');
+    html2 += '<div class="prop-lbl" style="margin-top:12px">Markierungen</div>';
+    if (n.type === 'b_task') html2 += chk('bp-collapsed', 'Teilprozess (+)', n.collapsed);
+    html2 += '<div class="prop-lbl" style="margin-top:6px;text-transform:none;letter-spacing:0">Schleife / Mehrfach</div>' +
+      sel2('bp-loop', [['none','— keine'],['standard','Schleife'],['parallel','Parallel'],['sequential','Sequenziell']], n.loop || 'none');
+    html2 += '<div style="height:8px"></div>' + chk('bp-adhoc', 'Ad-hoc (~)', n.adhoc) + chk('bp-comp', 'Kompensation', n.compensation);
+  }
+  box.innerHTML = html2;
+  if (!html2) return;
+
+  const redraw = () => { persist(); draw(); };
+  const m = document.getElementById('bp-marker');
+  if (m) m.onchange = () => { if (m.value === 'none') delete selected.marker; else selected.marker = m.value; redraw(); };
+  const th = document.getElementById('bp-throwing');
+  if (th) th.onchange = () => { selected.throwing = th.checked; redraw(); };
+  const bh = document.getElementById('bp-behavior');
+  if (bh) bh.onchange = () => { if (bh.value === 'int') delete selected.behavior; else selected.behavior = bh.value; redraw(); };
+  const vr = document.getElementById('bp-variant');
+  if (vr) vr.onchange = () => { if (vr.value === 'plain') delete selected.variant; else selected.variant = vr.value; redraw(); };
+  const inst = document.getElementById('bp-instantiate');
+  if (inst) inst.onchange = () => { selected.instantiate = inst.checked; redraw(); };
+  const gwp = document.getElementById('bp-gwpar');
+  if (gwp) gwp.onchange = () => { selected.gwparallel = gwp.checked; redraw(); };
+  const co = document.getElementById('bp-collapsed');
+  if (co) co.onchange = () => { selected.collapsed = co.checked; redraw(); };
+  const lp = document.getElementById('bp-loop');
+  if (lp) lp.onchange = () => { if (lp.value === 'none') delete selected.loop; else selected.loop = lp.value; redraw(); };
+  const ah = document.getElementById('bp-adhoc');
+  if (ah) ah.onchange = () => { selected.adhoc = ah.checked; redraw(); };
+  const cp = document.getElementById('bp-comp');
+  if (cp) cp.onchange = () => { selected.compensation = cp.checked; redraw(); };
+}
+
 function updateProps(){
   const sel = document.getElementById('sel-props');
   const noSel = document.getElementById('no-sel');
@@ -870,10 +1629,37 @@ function updateProps(){
     document.getElementById('prop-h').value = selected.h;
     document.getElementById('prop-w-lbl').textContent = selected.w;
     document.getElementById('prop-h-lbl').textContent = selected.h;
+    renderBpmnProps(selected);
   } else if (selectedConn){
     sel.style.display = 'none';
     noSel.style.display = 'block';
-    noSel.innerHTML = 'Verbindung ausgewählt.<br><br>Mit <b>Entf</b> oder „Löschen" entfernen.';
+    noSel.innerHTML = 'Verbindung ausgewählt.' +
+      '<div class="prop-lbl" style="margin-top:12px">Beschriftung</div>' +
+      '<input id="conn-label" class="prop-val" placeholder="z.B. ja / nein" />' +
+      '<div class="prop-lbl" style="margin-top:12px">Flusstyp</div>' +
+      '<select id="conn-style" class="prop-val">' +
+      '<option value="seq">Sequenzfluss —›</option>' +
+      '<option value="default">Standardfluss ⊘→</option>' +
+      '<option value="conditional">Bedingter Fluss ◇→</option>' +
+      '<option value="default">Standardfluss (/)</option>' +
+      '<option value="conditional">Bedingter Fluss (◇)</option>' +
+      '<option value="message">Nachrichtenfluss ⤍</option>' +
+      '<option value="assoc">Assoziation ┈</option></select>' +
+      '<div style="height:10px"></div>Mit <b>Entf</b> oder „Löschen" entfernen.';
+    const cl = document.getElementById('conn-label');
+    cl.value = selectedConn.label || '';
+    cl.oninput = () => {
+      if (!selectedConn) return;
+      if (cl.value) selectedConn.label = cl.value; else delete selectedConn.label;
+      persist(); draw();
+    };
+    const cs = document.getElementById('conn-style');
+    cs.value = selectedConn.style || 'seq';
+    cs.onchange = () => {
+      if (!selectedConn) return;
+      if (cs.value === 'seq') delete selectedConn.style; else selectedConn.style = cs.value;
+      persist(); draw();
+    };
   } else {
     sel.style.display = 'none';
     noSel.style.display = 'block';
@@ -884,6 +1670,15 @@ function updateStats(){
   document.getElementById('st-el').textContent = nodes.length;
   document.getElementById('st-conn').textContent = connections.length;
 }
+
+// palette tabs
+document.querySelectorAll('.pal-tab').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('.pal-tab').forEach(x => x.classList.toggle('active', x === b));
+    document.getElementById('pal-epk').style.display = b.dataset.pal === 'epk' ? 'block' : 'none';
+    document.getElementById('pal-bpmn').style.display = b.dataset.pal === 'bpmn' ? 'block' : 'none';
+  };
+});
 
 // sidebar
 document.querySelectorAll('.tile[data-type]').forEach(item => {
@@ -904,13 +1699,24 @@ canvas.addEventListener('drop', e => {
   addNode(type, e.clientX-rect.left, e.clientY-rect.top);
 });
 
+function nodesInside(container){
+  // elements whose centre lies within the container's bounds (excluding the container itself & other containers larger)
+  const cx1 = container.x, cy1 = container.y, cx2 = container.x+container.w, cy2 = container.y+container.h;
+  return nodes.filter(n => {
+    if (n === container) return false;
+    if (n.type === 'b_lane') return false; // lanes don't carry other lanes/pool
+    const mx = n.x + n.w/2, my = n.y + n.h/2;
+    return mx >= cx1 && mx <= cx2 && my >= cy1 && my <= cy2;
+  });
+}
+
 function addNode(type, sx, sy){
   const w = screenToWorld(sx, sy);
-  const isConn = CONNECTOR_TYPES.includes(type);
-  const nw = isConn ? 52 : 150, nh = isConn ? 52 : 54;
+  const isConn = SMALL_TYPES.includes(type);
+  const [nw, nh] = sizeFor(type);
   save();
   const node = {id:idCounter++, type, label:'', x:w.x-nw/2, y:w.y-nh/2, w:nw, h:nh};
-  nodes.push(node);
+  if (type === 'b_lane' || type === 'b_group') nodes.unshift(node); else nodes.push(node);
   selected = node; selectedConn = null;
   persist(); draw(); updateStats(); updateProps();
   if (!isConn) document.getElementById('prop-name').focus();
@@ -1044,7 +1850,8 @@ function parseQuickGraph(text){
 }
 
 // ---------- graph auto-layout (for KI mode) ----------
-function layoutAndInsert(spec){
+function layoutAndInsert(spec, opts){
+  opts = opts || {};
   const specNodes = (spec.nodes || []).filter(n => n && VALID_TYPES.includes(n.type) && n.id);
   const idset = new Set(specNodes.map(n=>n.id));
   let edges = (spec.edges || []).filter(e => Array.isArray(e) && e.length>=2 && idset.has(e[0]) && idset.has(e[1]) && e[0]!==e[1]);
@@ -1054,7 +1861,7 @@ function layoutAndInsert(spec){
   if (!specNodes.length) throw new Error('Keine gültigen Elemente in der KI-Antwort.');
 
   // separate side attachments (org/info/doc with exactly one edge)
-  const attachTypes = ['org','info','dokument'];
+  const attachTypes = ['org','info','dokument','b_data'];
   const degree = {};
   specNodes.forEach(n => degree[n.id] = 0);
   edges.forEach(([a,b]) => { degree[a]++; degree[b]++; });
@@ -1140,11 +1947,11 @@ function layoutAndInsert(spec){
 
   // ---- build real nodes ----
   let replace = true;
-  if (nodes.length){
+  if (!opts.force && nodes.length){
     replace = confirm('Bestehendes Diagramm ersetzen?\nOK = ersetzen · Abbrechen = daneben einfügen');
   }
   save();
-  if (replace){ nodes = []; connections = []; }
+  if (replace){ nodes = opts.keepNodes || []; connections = []; }
 
   let offsetX = 0, offsetY = 0;
   if (!replace && nodes.length){
@@ -1153,14 +1960,37 @@ function layoutAndInsert(spec){
     offsetX = maxX + 320; offsetY = minY;
   }
 
-  const COLW = 210, ROWH = 116;
+  const measure2 = document.createElement('canvas').getContext('2d');
+  measure2.font = '11.5px "Segoe UI", system-ui, sans-serif';
+  const fitBox = (sn, w0, h0) => {
+    // only the box-like, text-carrying shapes grow; small symbols stay fixed
+    const boxy = ['ereignis','funktion','prozess','b_task','b_subprocess','info','dokument','org'].includes(sn.type);
+    if (!boxy || !sn.label) return [w0, h0];
+    const inset = textInset(sn.type);
+    const oneLine = measure2.measureText(sn.label).width;
+    let w = w0;
+    // grow width up to a cap so 1–2 lines fit
+    const cap = sn.type === 'org' ? 200 : 240;
+    w = Math.min(cap, Math.max(w0, oneLine / inset + 22));
+    // wrap at chosen width, grow height for extra lines
+    const lines = wrapText(measure2, sn.label, w * inset, 11.5);
+    const needH = 26 + lines.length * 15;
+    return [Math.round(w), Math.max(h0, needH)];
+  };
+  const COLW = 250, ROWH = 124;
   const idMap = {};
   mainNodes.forEach(sn => {
-    const isConn = CONNECTOR_TYPES.includes(sn.type);
-    const w = isConn ? 48 : 165, h = isConn ? 48 : 56;
+    const [w0, h0] = sizeFor(sn.type);
+    const [w, h] = fitBox(sn, w0, h0);
     const cx = offsetX + xcol[sn.id] * COLW;
     const cy = offsetY + depth[sn.id] * ROWH;
     const node = {id:idCounter++, type:sn.type, label:sn.label || '', x:cx - w/2, y:cy - h/2, w, h};
+    if (sn.marker) node.marker = sn.marker;
+    if (sn.throwing) node.throwing = true;
+    if (sn.loop) node.loop = sn.loop;
+    if (sn.collapsed) node.collapsed = true;
+    if (sn.adhoc) node.adhoc = true;
+    if (sn.compensation) node.compensation = true;
     nodes.push(node);
     idMap[sn.id] = node;
   });
@@ -1169,18 +1999,27 @@ function layoutAndInsert(spec){
     const host = idMap[mainId];
     if (!host) return;
     const list = attachOf[mainId];
-    let ay = host.y + host.h/2 - ((list.length-1) * 64)/2;
-    list.forEach(({node:an, edge}) => {
-      const a = {id:idCounter++, type:an.type, label:an.label || '', x:host.x + host.w + 56, y:ay - 25, w:140, h:50};
+    const sizes = list.map(({node:an}) => fitBox(an, ...sizeFor(an.type)));
+    const totalH = sizes.reduce((s2,[,hh]) => s2 + hh, 0) + (list.length-1)*14;
+    let ay = host.y + host.h/2 - totalH/2;
+    list.forEach(({node:an}, i) => {
+      const [aw, ah] = sizes[i];
+      const a = {id:idCounter++, type:an.type, label:an.label || '', x:host.x + host.w + 56, y:ay, w:aw, h:ah};
       nodes.push(a);
       idMap[an.id] = a;
-      ay += 64;
+      ay += ah + 14;
     });
   });
   // all edges
+  const meta = opts.meta || {};
   edges.forEach(([a,b]) => {
     const f = idMap[a], t = idMap[b];
-    if (f && t) connections.push({from:f.id, to:t.id});
+    if (!f || !t) return;
+    const ex = meta[a + '>' + b] || {};
+    const cn = {from:f.id, to:t.id};
+    if (ex.style) cn.style = ex.style;
+    if (ex.label) cn.label = ex.label;
+    connections.push(cn);
   });
 
   finishGenerate(mainNodes.length + ' Elemente generiert ✓');
@@ -1209,6 +2048,7 @@ async function aiGenerate(){
   if (!text){ aiError('Bitte zuerst eine Prozessbeschreibung einfügen.'); return; }
   if (!key){ aiError('Für den KI-Modus wird ein Anthropic API-Schlüssel benötigt (console.anthropic.com → API Keys). Er wird nur lokal gespeichert.'); return; }
   localStorage.setItem('floei-api-key', key);
+  if (window.floeiNative) window.floeiNative.setKey(key);
   aiError('');
 
   const btn = document.getElementById('auto-go');
@@ -1216,7 +2056,8 @@ async function aiGenerate(){
   const origLabel = btn.textContent;
   btn.textContent = 'Generiere…';
 
-  const sysPrompt = 'Du bist Experte für EPK-Modellierung (Ereignisgesteuerte Prozessketten, ARIS-Notation, IHK-Prüfungsstandard). ' +
+  const notation = (document.querySelector('input[name="ki-notation"]:checked') || {value:'epk'}).value;
+  const EPK_PROMPT = 'Du bist Experte für EPK-Modellierung (Ereignisgesteuerte Prozessketten, ARIS-Notation, IHK-Prüfungsstandard). ' +
     'Wandle die Prozessbeschreibung des Nutzers in eine fachlich korrekte EPK um. ' +
     'Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown-Codeblöcke, ohne Erklärungen: ' +
     '{"nodes":[{"id":"n1","type":"ereignis","label":"..."}],"edges":[["n1","n2"]]} ' +
@@ -1229,6 +2070,22 @@ async function aiGenerate(){
     '(6) Org-Einheiten: Kante von der Org-Einheit ZUR Funktion. Dokumente/Infoobjekte: Kante von der Funktion zum Objekt (Output) bzw. zum Objekt zur Funktion (Input). ' +
     '(7) Labels kurz halten (max. 5 Wörter). Ereignisse im Zustandsstil ("Angebot erstellt", "Zahlung eingegangen"), Funktionen im Infinitivstil ("Angebot erstellen"). ' +
     '(8) Konnektoren haben label "" (leer).';
+  const BPMN_PROMPT = 'Du bist Experte für BPMN-2.0-Modellierung (IHK-Prüfungsstandard). ' +
+    'Wandle die Prozessbeschreibung des Nutzers in ein fachlich korrektes BPMN-Diagramm um. ' +
+    'Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown-Codeblöcke, ohne Erklärungen: ' +
+    '{"nodes":[{"id":"n1","type":"b_start","label":"..."}],"edges":[["n1","n2"]]} ' +
+    'Erlaubte Typen: b_start, b_inter, b_end, b_task, b_subprocess (Teilprozess), b_gw_x (XOR), b_gw_and (parallel), b_gw_or (inklusiv), b_gw_xe (ereignisbasiert), b_data (Datenobjekt), b_store (Datenspeicher). ' +
+    'Optionale Felder pro Knoten: bei Ereignissen "marker" aus [message,timer,error,escalation,condition,signal,link,compensation,terminate] und "throwing":true für werfende Zwischenereignisse; bei Tasks "marker" aus [user,manual,service,script,business,send,receive] sowie "loop":"standard|parallel|sequential". Beispiel: {"id":"n3","type":"b_task","label":"Daten abrufen","marker":"service"}. ' +
+    'Modellierungsregeln: (1) Genau ein Startereignis, mindestens ein Endereignis. ' +
+    '(2) Tasks im Verbstil ("Rechnung prüfen"); Ereignisse im Zustandsstil. ' +
+    '(3) Entscheidungen über b_gw_x NACH dem entscheidenden Task; das Gateway-Label ist die Frage (z.B. "Zahlung eingegangen?"); die Bedingung (ja/nein) in das Label des direkt folgenden Elements integrieren. ' +
+    '(4) Parallele Abläufe mit b_gw_and öffnen UND wieder schließen. ' +
+    '(5) Zusammenführungen alternativer Pfade über ein Gateway desselben Typs. ' +
+    '(6) Schleifen sind erlaubt (Kante zurück zu einem früheren Element). ' +
+    '(7) Datenobjekte/Datenspeicher: Kante vom Task zum Objekt (Output) bzw. vom Objekt zum Task (Input). ' +
+    '(8) Vergib passende Marker: Nachrichten-Ereignisse → message, zeitliche → timer; Tasks mit Systembezug → service, mit Benutzerinteraktion → user, Versand → send/receive. ' +
+    '(9) Labels kurz (max. 5 Wörter). KEINE EPK-Elemente (ereignis/funktion) verwenden.';
+  const sysPrompt = notation === 'bpmn' ? BPMN_PROMPT : EPK_PROMPT;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1303,6 +2160,30 @@ function renderTo(tc, scale, offX, offY, W, H){
   tc.fillStyle = T().canvasBg;
   tc.fillRect(0,0,W,H);
   const w2s = (x,y)=>({x:x*scale+offX, y:y*scale+offY});
+  nodes.forEach(n=>{
+    if (n.type !== 'b_lane') return;
+    const s = w2s(n.x,n.y), sw = n.w*scale, sh = n.h*scale;
+    const c = T().colors[n.type];
+    tc.fillStyle = c.fill; tc.fillRect(s.x,s.y,sw,sh);
+    tc.strokeStyle = c.stroke; tc.lineWidth = 1.3*scale*0.8;
+    tc.strokeRect(s.x,s.y,sw,sh);
+    if (n.poolHeader){
+      tc.fillStyle = c.stroke;
+      tc.font = '600 ' + 12*scale + 'px "Segoe UI", system-ui, sans-serif';
+      tc.textAlign='center'; tc.textBaseline='middle';
+      tc.fillText(n.label || 'Pool', s.x+sw/2, s.y+sh/2, sw*0.95);
+    } else {
+      tc.beginPath(); tc.moveTo(s.x+26*scale, s.y); tc.lineTo(s.x+26*scale, s.y+sh); tc.stroke();
+      tc.save();
+      tc.translate(s.x+14*scale, s.y+sh/2);
+      tc.rotate(-Math.PI/2);
+      tc.fillStyle = c.stroke;
+      tc.font = 11*scale + 'px "Segoe UI", system-ui, sans-serif';
+      tc.textAlign='center'; tc.textBaseline='middle';
+      tc.fillText(n.label || 'Lane', 0, 0, sh*0.9);
+      tc.restore();
+    }
+  });
   connections.forEach(c=>{
     const f = nodes.find(n=>n.id===c.from), t = nodes.find(n=>n.id===c.to);
     if (!f||!t) return;
@@ -1311,16 +2192,46 @@ function renderTo(tc, scale, offX, offY, W, H){
     const dx=sb.x-sa.x, dy=sb.y-sa.y, len=Math.hypot(dx,dy);
     if (len<2) return;
     const ux=dx/len, uy=dy/len, hl=11*scale*0.7, hw=5.5*scale*0.7;
+    if (c.style==='message') tc.setLineDash([7*scale,5*scale]);
+    else if (c.style==='assoc') tc.setLineDash([3*scale,4*scale]);
     tc.strokeStyle=T().arrow; tc.lineWidth=1.4*scale*0.8;
-    tc.beginPath(); tc.moveTo(sa.x,sa.y); tc.lineTo(sb.x-ux*hl*0.6, sb.y-uy*hl*0.6); tc.stroke();
-    tc.fillStyle=T().arrow;
-    tc.beginPath();
-    tc.moveTo(sb.x,sb.y);
-    tc.lineTo(sb.x-ux*hl-uy*hw, sb.y-uy*hl+ux*hw);
-    tc.lineTo(sb.x-ux*hl+uy*hw, sb.y-uy*hl-ux*hw);
-    tc.closePath(); tc.fill();
+    let lsx = sa.x, lsy = sa.y;
+    if (c.style==='conditional'){ lsx = sa.x+ux*13*scale; lsy = sa.y+uy*13*scale; }
+    tc.beginPath(); tc.moveTo(lsx,lsy);
+    tc.lineTo(c.style==='assoc' ? sb.x : sb.x-ux*hl*0.6, c.style==='assoc' ? sb.y : sb.y-uy*hl*0.6);
+    tc.stroke(); tc.setLineDash([]);
+    if (c.style==='default'){
+      const px=sa.x+ux*9*scale, py=sa.y+uy*9*scale, ss=5*scale;
+      tc.beginPath(); tc.moveTo(px-ux*ss-uy*ss, py-uy*ss+ux*ss); tc.lineTo(px+ux*ss+uy*ss, py+uy*ss-ux*ss); tc.stroke();
+    }
+    if (c.style==='conditional'){
+      const k=6*scale, mx2=sa.x+ux*7*scale, my2=sa.y+uy*7*scale;
+      tc.fillStyle=T().canvasBg;
+      tc.beginPath(); tc.moveTo(mx2+ux*k,my2+uy*k); tc.lineTo(mx2-uy*k*0.7,my2+ux*k*0.7); tc.lineTo(mx2-ux*k,my2-uy*k); tc.lineTo(mx2+uy*k*0.7,my2-ux*k*0.7); tc.closePath();
+      tc.fill(); tc.stroke();
+    }
+    if (c.style !== 'assoc'){
+      tc.fillStyle=T().arrow;
+      tc.beginPath();
+      tc.moveTo(sb.x,sb.y);
+      tc.lineTo(sb.x-ux*hl-uy*hw, sb.y-uy*hl+ux*hw);
+      tc.lineTo(sb.x-ux*hl+uy*hw, sb.y-uy*hl-ux*hw);
+      tc.closePath(); tc.fill();
+    }
+    if (c.label){
+      const mx2 = (sa.x+sb.x)/2, my2 = (sa.y+sb.y)/2;
+      const fs2 = 10.5*scale;
+      tc.font = fs2 + 'px "Segoe UI", system-ui, sans-serif';
+      const tw = tc.measureText(c.label).width;
+      tc.fillStyle = T().canvasBg;
+      tc.fillRect(mx2 - tw/2 - 4*scale, my2 - fs2/2 - 3*scale, tw + 8*scale, fs2 + 6*scale);
+      tc.fillStyle = T().arrow;
+      tc.textAlign = 'center'; tc.textBaseline = 'middle';
+      tc.fillText(c.label, mx2, my2);
+    }
   });
   nodes.forEach(n=>{
+    if (n.type === 'b_lane') return;
     const s = w2s(n.x,n.y);
     const sw=n.w*scale, sh=n.h*scale;
     const c = T().colors[n.type];
@@ -1329,40 +2240,109 @@ function renderTo(tc, scale, offX, offY, W, H){
     if (themeName === 'dark'){
       tc.save(); tc.shadowColor = c.stroke + '50'; tc.shadowBlur = 14*scale; tc.fill(); tc.restore();
     } else { tc.fill(); }
-    tc.strokeStyle=c.stroke; tc.lineWidth=1.5*scale*0.8;
+    tc.strokeStyle=c.stroke; tc.lineWidth=(n.type==='b_end'?3:1.5)*scale*0.8;
     if (n.type==='prozess') tc.setLineDash([5*scale,3*scale]);
     tc.stroke(); tc.setLineDash([]);
-    decorateNode(tc, n.type, s.x, s.y, sw, sh);
+    decorateNode(tc, n.type, s.x, s.y, sw, sh, n);
     const fs = 11.5*scale;
     tc.fillStyle = c.stroke;
     tc.font = fs+'px "Segoe UI", system-ui, sans-serif';
     tc.textAlign='center'; tc.textBaseline='middle';
-    const lines = wrapText(tc, n.label || LABELS[n.type], sw*0.82, fs);
-    const lh = fs*1.18;
-    const startY = s.y + sh/2 - (lines.length-1)*lh/2;
-    lines.forEach((l,i)=>tc.fillText(l, s.x+sw/2, startY+i*lh, sw*0.85));
+    const txt2 = n.label || LABELS[n.type];
+    if (txt2){
+      if (LABEL_BELOW.includes(n.type)){
+        tc.fillText(txt2, s.x+sw/2, s.y+sh + 11*scale, 180*scale);
+      } else {
+        const lines = wrapText(tc, txt2, sw*textInset(n.type), fs);
+        const lh = fs*1.18;
+        const startY = s.y + sh/2 - (lines.length-1)*lh/2;
+        lines.forEach((l,i)=>tc.fillText(l, s.x+sw/2, startY+i*lh, sw*0.85));
+      }
+    }
   });
 }
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// Render one node (shape + all BPMN decorations/markers) to a transparent PNG dataURL.
+// Used by SVG export so complex BPMN symbols are reproduced 1:1.
+function nodeToDataURL(n, scale){
+  const pad = 6;
+  const cw = Math.ceil((n.w + pad*2) * scale), ch = Math.ceil((n.h + pad*2) * scale);
+  const cv = document.createElement('canvas');
+  cv.width = cw; cv.height = ch;
+  const g = cv.getContext('2d');
+  g.scale(scale, scale);
+  g.translate(pad, pad);
+  const c = T().colors[n.type];
+  shapePath(g, n.type, 0, 0, n.w, n.h, 14);
+  g.fillStyle = c.fill; g.fill();
+  g.strokeStyle = c.stroke;
+  g.lineWidth = (n.type === 'b_end' ? 3 : 1.5);
+  if (n.type === 'prozess' || n.type === 'b_group') g.setLineDash([5,3]);
+  g.stroke(); g.setLineDash([]);
+  // decorateNode uses module zoom for task-corner sizing; temporarily neutralize via zoomScaleHint(g)=1
+  decorateNode(g, n.type, 0, 0, n.w, n.h, n);
+  return { url: cv.toDataURL('image/png'), pad, cw: cw/scale, ch: ch/scale };
+}
+
 document.getElementById('btn-svg').onclick = () => {
   if (!nodes.length){ toast('Diagramm ist leer'); return; }
+  const measure = document.createElement('canvas').getContext('2d');
+  measure.font = '11.5px "Segoe UI", system-ui, sans-serif';
   const b = contentBounds();
   const arrow = T().arrow;
   const parts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(b.w)}" height="${Math.round(b.h)}" viewBox="${b.x} ${b.y} ${b.w} ${b.h}">`];
   parts.push(`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="${T().canvasBg}"/>`);
   parts.push(`<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="${arrow}"/></marker></defs>`);
+  nodes.forEach(n=>{
+    if (n.type !== 'b_lane') return;
+    const c = T().colors[n.type];
+    const {x,y,w,h} = n;
+    parts.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c.fill}" stroke="${c.stroke}" stroke-width="1.3"/>`);
+    if (n.poolHeader){
+      parts.push(`<text x="${x+w/2}" y="${y+h/2}" dominant-baseline="central" text-anchor="middle" fill="${c.stroke}" font-size="12" font-weight="600" font-family="Segoe UI, system-ui, sans-serif">${esc(n.label || 'Pool')}</text>`);
+    } else {
+      parts.push(`<line x1="${x+26}" y1="${y}" x2="${x+26}" y2="${y+h}" stroke="${c.stroke}" stroke-width="1.3"/>`);
+      parts.push(`<text x="0" y="0" transform="translate(${x+14},${y+h/2}) rotate(-90)" dominant-baseline="central" text-anchor="middle" fill="${c.stroke}" font-size="11" font-family="Segoe UI, system-ui, sans-serif">${esc(n.label || 'Lane')}</text>`);
+    }
+  });
   connections.forEach(c=>{
     const f=nodes.find(n=>n.id===c.from), t=nodes.find(n=>n.id===c.to);
     if (!f||!t) return;
     const a=edgePoint(f,t), bb=edgePoint(t,f);
-    parts.push(`<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${bb.x.toFixed(1)}" y2="${bb.y.toFixed(1)}" stroke="${arrow}" stroke-width="1.4" marker-end="url(#ah)"/>`);
+    const cdash = c.style==='message' ? ' stroke-dasharray="7,5"' : c.style==='assoc' ? ' stroke-dasharray="3,4"' : '';
+    const cmk = c.style==='assoc' ? '' : ' marker-end="url(#ah)"';
+    // flow decorations at the start
+    const fdx = (bb.x-a.x), fdy = (bb.y-a.y), flen = Math.hypot(fdx,fdy) || 1;
+    const fux = fdx/flen, fuy = fdy/flen;
+    let startX = a.x, startY = a.y;
+    let flowDeco = '';
+    if (c.style==='default'){
+      const px=a.x+fux*9, py=a.y+fuy*9, ss=5;
+      flowDeco = `<line x1="${(px-fux*ss-fuy*ss).toFixed(1)}" y1="${(py-fuy*ss+fux*ss).toFixed(1)}" x2="${(px+fux*ss+fuy*ss).toFixed(1)}" y2="${(py+fuy*ss-fux*ss).toFixed(1)}" stroke="${arrow}" stroke-width="1.4"/>`;
+    } else if (c.style==='conditional'){
+      const k=6, mx2=a.x+fux*7, my2=a.y+fuy*7;
+      startX = a.x+fux*13; startY = a.y+fuy*13;
+      flowDeco = `<polygon points="${(mx2+fux*k).toFixed(1)},${(my2+fuy*k).toFixed(1)} ${(mx2-fuy*k*0.7).toFixed(1)},${(my2+fux*k*0.7).toFixed(1)} ${(mx2-fux*k).toFixed(1)},${(my2-fuy*k).toFixed(1)} ${(mx2+fuy*k*0.7).toFixed(1)},${(my2-fux*k*0.7).toFixed(1)}" fill="${T().canvasBg}" stroke="${arrow}" stroke-width="1.4"/>`;
+    }
+    parts.push(`<line x1="${startX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${bb.x.toFixed(1)}" y2="${bb.y.toFixed(1)}" stroke="${arrow}" stroke-width="1.4"${cdash}${cmk}/>`);
+    if (flowDeco) parts.push(flowDeco);
+    if (c.label){
+      parts.push(`<text x="${((a.x+bb.x)/2).toFixed(1)}" y="${((a.y+bb.y)/2).toFixed(1)}" dominant-baseline="central" text-anchor="middle" fill="${arrow}" stroke="${T().canvasBg}" stroke-width="4" paint-order="stroke" font-size="10.5" font-family="Segoe UI, system-ui, sans-serif">${esc(c.label)}</text>`);
+    }
   });
   nodes.forEach(n=>{
+    if (n.type === 'b_lane') return;
     const c = T().colors[n.type];
     const {x,y,w,h} = n;
     const common = `fill="${c.fill}" stroke="${c.stroke}" stroke-width="1.5"`;
+    if (n.type === 'b_note'){
+      const bb = Math.min(w*0.12, 16);
+      parts.push(`<path d="M${x+bb},${y} L${x},${y} L${x},${y+h} L${x+bb},${y+h}" fill="none" stroke="${c.stroke}" stroke-width="1.5"/>`);
+      parts.push(`<text x="${x+w/2+bb/2}" y="${y+h/2}" dominant-baseline="central" text-anchor="middle" fill="${c.stroke}" font-size="11" font-family="Segoe UI, system-ui, sans-serif">${esc(n.label || 'Anmerkung')}</text>`);
+      return;
+    }
     if (n.type==='ereignis'||n.type==='prozess'){
       const d=Math.min(h*0.45,w*0.25);
       const dash = n.type==='prozess' ? ' stroke-dasharray="5,3"' : '';
@@ -1378,12 +2358,47 @@ document.getElementById('btn-svg').onclick = () => {
     } else if (n.type==='dokument'){
       const cr=h*0.22;
       parts.push(`<path d="M${x},${y} L${x+w},${y} L${x+w},${y+h-cr} Q${x+w*0.75},${y+h-cr*2.2} ${x+w/2},${y+h-cr} Q${x+w*0.25},${y+h+cr*0.2} ${x},${y+h-cr} Z" ${common}/>`);
+    } else if (n.type==='b_task'){
+      parts.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(10,h*0.22)}" ${common}/>`);
+    } else if (DIAMOND_TYPES.includes(n.type)){
+      const cx=x+w/2, cy=y+h/2;
+      parts.push(`<polygon points="${cx},${y} ${x+w},${cy} ${cx},${y+h} ${x},${cy}" ${common}/>`);
+      const k=Math.min(w,h)*0.17, sym=`fill="none" stroke="${c.stroke}" stroke-width="1.8"`;
+      if (n.type==='b_gw_x') parts.push(`<path d="M${cx-k},${cy-k} L${cx+k},${cy+k} M${cx+k},${cy-k} L${cx-k},${cy+k}" ${sym}/>`);
+      if (n.type==='b_gw_and'){ const k2=Math.min(w,h)*0.22; parts.push(`<path d="M${cx-k2},${cy} L${cx+k2},${cy} M${cx},${cy-k2} L${cx},${cy+k2}" ${sym}/>`); }
+      if (n.type==='b_gw_or') parts.push(`<circle cx="${cx}" cy="${cy}" r="${Math.min(w,h)*0.19}" ${sym}/>`);
+    } else if (n.type==='b_data'){
+      const f=Math.min(w,h)*0.24;
+      parts.push(`<path d="M${x},${y} L${x+w-f},${y} L${x+w},${y+f} L${x+w},${y+h} L${x},${y+h} Z" ${common}/>`);
+      parts.push(`<path d="M${x+w-f},${y} L${x+w-f},${y+f} L${x+w},${y+f}" fill="none" stroke="${c.stroke}" stroke-width="1.5"/>`);
     } else {
       const r=Math.min(w,h)/2;
-      parts.push(`<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" ${common}/>`);
+      const lw = n.type==='b_end' ? 3 : 1.5;
+      parts.push(`<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" fill="${c.fill}" stroke="${c.stroke}" stroke-width="${lw}"/>`);
       if (n.type==='xor') parts.push(`<circle cx="${x+w/2}" cy="${y+h/2}" r="${r*0.72}" fill="none" stroke="${c.stroke}" stroke-width="1.5"/>`);
+      if (n.type==='b_inter') parts.push(`<circle cx="${x+w/2}" cy="${y+h/2}" r="${r*0.78}" fill="none" stroke="${c.stroke}" stroke-width="1.5"/>`);
     }
-    parts.push(`<text x="${x+w/2}" y="${y+h/2}" dominant-baseline="central" text-anchor="middle" fill="${c.stroke}" font-size="11.5" font-family="Segoe UI, system-ui, sans-serif">${esc(n.label || LABELS[n.type])}</text>`);
+    // rich BPMN symbols (markers, new shapes) → overlay exact raster so nothing is lost
+    const richShape = ['b_subprocess','b_store','b_group','b_gw_xe','b_gw_complex','b_custom'].includes(n.type);
+    const hasMarker = (EVENT_TYPES.includes(n.type) && (n.marker && n.marker!=='none' || n.behavior==='nonint' || n.throwing))
+      || (n.type==='b_data' && n.variant && n.variant!=='plain')
+      || (TASKLIKE_TYPES.includes(n.type) && (n.marker && n.marker!=='none' || n.loop || n.adhoc || n.compensation || n.collapsed));
+    if (richShape || hasMarker){
+      try {
+        const r = nodeToDataURL(n, 3);
+        parts.push(`<image x="${x - r.pad}" y="${y - r.pad}" width="${r.cw}" height="${r.ch}" href="${r.url}"/>`);
+      } catch(e){}
+    }
+    const svgTxt = n.label || LABELS[n.type];
+    if (svgTxt){
+      const below = LABEL_BELOW.includes(n.type);
+      const lines = below ? [svgTxt] : wrapText(measure, svgTxt, w * textInset(n.type), 11.5);
+      const lh = 13.5;
+      const cy0 = below ? (y+h+13) : (y+h/2 - (lines.length-1)*lh/2);
+      let tspans = '';
+      lines.forEach((ln, i) => { tspans += `<tspan x="${x+w/2}" y="${(cy0 + i*lh).toFixed(1)}">${esc(ln)}</tspan>`; });
+      parts.push(`<text text-anchor="middle" fill="${c.stroke}" font-size="11.5" font-family="Segoe UI, system-ui, sans-serif">${tspans}</text>`);
+    }
   });
   parts.push('</svg>');
   const blob = new Blob([parts.join('\n')], {type:'image/svg+xml;charset=utf-8'});
@@ -1396,6 +2411,11 @@ document.getElementById('btn-svg').onclick = () => {
 };
 
 document.getElementById('btn-json').onclick = () => {
+  if (window.floeiNative && window.floeiNative.saveText){
+    const payload = JSON.stringify({name:document.getElementById('diagram-name').value, nodes, connections, version:3}, null, 2);
+    window.floeiNative.saveText(fileBase() + '.json', payload).then(r => { if (r && r.ok) toast('Gespeichert ✓'); });
+    return;
+  }
   const blob = new Blob([JSON.stringify({name:document.getElementById('diagram-name').value, nodes, connections, version:3}, null, 2)], {type:'application/json'});
   const link = document.createElement('a');
   link.download = fileBase() + '.json';
@@ -1405,14 +2425,9 @@ document.getElementById('btn-json').onclick = () => {
   toast('JSON exportiert ✓');
 };
 
-document.getElementById('btn-import').onclick = () => document.getElementById('file-input').click();
-document.getElementById('file-input').addEventListener('change', function(){
-  const file = this.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
+function importJsonText(text){
     try {
-      const s = JSON.parse(reader.result);
+      const s = JSON.parse(text);
       if (!Array.isArray(s.nodes)) throw new Error('invalid');
       save();
       nodes = s.nodes;
@@ -1423,9 +2438,359 @@ document.getElementById('file-input').addEventListener('change', function(){
       persist(); draw(); updateStats(); updateProps();
       toast('Importiert ✓');
     } catch(err){ toast('Ungültige JSON-Datei'); }
-  };
+}
+document.getElementById('btn-import').onclick = async () => {
+  if (window.floeiNative && window.floeiNative.openText){
+    const r = await window.floeiNative.openText();
+    if (r && r.ok) importJsonText(r.content);
+    return;
+  }
+  document.getElementById('file-input').click();
+};
+document.getElementById('file-input').addEventListener('change', function(){
+  const file = this.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => importJsonText(reader.result);
   reader.readAsText(file);
   this.value = '';
+});
+
+
+// ---------- Regelcheck ----------
+function runCheck(){
+  const issues = [];
+  const sideTypes = ['org','info','dokument','b_data','b_note','b_lane'];
+  const main = nodes.filter(n => !sideTypes.includes(n.type));
+  const byId = {}; nodes.forEach(n => byId[n.id] = n);
+  const inn = {}, out = {};
+  main.forEach(n => { inn[n.id] = []; out[n.id] = []; });
+  connections.forEach(c => {
+    if (out[c.from] !== undefined && inn[c.to] !== undefined){
+      out[c.from].push(c.to); inn[c.to].push(c.from);
+    }
+  });
+  const lbl = n => '\u201E' + (n.label || TYPE_NAMES[n.type]) + '\u201C';
+  const epkConn = ['and','or','xor'];
+  function nextReal(id){
+    const res = [], seen = new Set();
+    (function walk(u){
+      (out[u] || []).forEach(t => {
+        if (seen.has(t)) return; seen.add(t);
+        const m = byId[t];
+        if (!m) return;
+        if (epkConn.includes(m.type)) walk(t);
+        else res.push(m);
+      });
+    })(id);
+    return res;
+  }
+  main.forEach(n => {
+    const ideg = (inn[n.id]||[]).length, odeg = (out[n.id]||[]).length;
+    if (ideg + odeg === 0)
+      issues.push({level:'warn', msg:lbl(n) + ' ist mit nichts verbunden.', id:n.id});
+    if (n.type === 'ereignis' || n.type === 'funktion'){
+      nextReal(n.id).forEach(m => {
+        if (m.type === n.type)
+          issues.push({level:'error', msg:'EPK: ' + lbl(n) + ' \u2192 ' + lbl(m) + ' \u2014 Ereignisse und Funktionen m\u00fcssen sich abwechseln.', id:m.id});
+      });
+    }
+    if (n.type === 'ereignis'){
+      (out[n.id]||[]).forEach(t => {
+        const m = byId[t];
+        if (m && (m.type === 'xor' || m.type === 'or') && (out[t]||[]).length > 1)
+          issues.push({level:'error', msg:'EPK: Nach Ereignis ' + lbl(n) + ' darf kein XOR/OR-Split folgen \u2014 Ereignisse treffen keine Entscheidungen.', id:t});
+      });
+    }
+    if (epkConn.includes(n.type) && ideg <= 1 && odeg <= 1)
+      issues.push({level:'warn', msg:TYPE_NAMES[n.type] + ' verzweigt nicht (je 1 Ein-/Ausgang) \u2014 wahrscheinlich \u00fcberfl\u00fcssig.', id:n.id});
+    if (n.type === 'funktion' && odeg > 1)
+      issues.push({level:'warn', msg:'EPK: Funktion ' + lbl(n) + ' hat mehrere Ausg\u00e4nge \u2014 Verzweigungen geh\u00f6ren \u00fcber einen Konnektor.', id:n.id});
+    if (n.type === 'b_start' && ideg > 0)
+      issues.push({level:'error', msg:'BPMN: Startereignis darf keinen eingehenden Sequenzfluss haben.', id:n.id});
+    if (n.type === 'b_end' && odeg > 0)
+      issues.push({level:'error', msg:'BPMN: Endereignis darf keinen ausgehenden Sequenzfluss haben.', id:n.id});
+    if (['b_gw_x','b_gw_and','b_gw_or'].includes(n.type) && ideg <= 1 && odeg <= 1)
+      issues.push({level:'warn', msg:'BPMN: ' + TYPE_NAMES[n.type] + ' verzweigt nicht.', id:n.id});
+  });
+  const epkMain = main.filter(n => ['ereignis','funktion'].includes(n.type));
+  epkMain.forEach(n => {
+    if (!(inn[n.id]||[]).length && n.type === 'funktion' && (out[n.id]||[]).length)
+      issues.push({level:'warn', msg:'EPK beginnt mit Funktion ' + lbl(n) + ' \u2014 sollte mit einem Ereignis starten.', id:n.id});
+    if (!(out[n.id]||[]).length && n.type === 'funktion' && (inn[n.id]||[]).length)
+      issues.push({level:'warn', msg:'EPK endet mit Funktion ' + lbl(n) + ' \u2014 sollte mit einem Ereignis enden.', id:n.id});
+  });
+  return issues;
+}
+
+function focusNode(id){
+  const n = nodes.find(x => x.id === id);
+  if (!n) return;
+  selected = n; selectedConn = null;
+  panX = wrap.clientWidth/2 - (n.x + n.w/2)*zoom;
+  panY = wrap.clientHeight/2 - (n.y + n.h/2)*zoom;
+  draw(); updateProps();
+}
+
+function openCheck(){
+  const box = document.getElementById('check-results');
+  if (!nodes.length){
+    box.innerHTML = '<div class="check-ok">Diagramm ist leer \u2014 nichts zu pr\u00fcfen.</div>';
+  } else {
+    const issues = runCheck();
+    if (!issues.length){
+      box.innerHTML = '<div class="check-ok">\u2713 Keine Regelverst\u00f6\u00dfe gefunden \u2014 sieht pr\u00fcfungsreif aus!</div>';
+    } else {
+      issues.sort((a,b) => (a.level === 'error' ? 0 : 1) - (b.level === 'error' ? 0 : 1));
+      box.innerHTML = '';
+      issues.forEach(it => {
+        const b = document.createElement('button');
+        b.className = 'check-item ' + it.level;
+        b.innerHTML = '<span class="dot"></span><span></span>';
+        b.lastElementChild.textContent = it.msg;
+        b.onclick = () => { document.getElementById('check-bg').style.display = 'none'; focusNode(it.id); };
+        box.appendChild(b);
+      });
+    }
+  }
+  document.getElementById('check-bg').style.display = 'flex';
+}
+
+// ---------- Auto-Layout for existing diagram ----------
+function relayoutExisting(){
+  const lanes = nodes.filter(n => n.type === 'b_lane');
+  const rest = nodes.filter(n => n.type !== 'b_lane');
+  if (!rest.length){ toast('Nichts anzuordnen'); return; }
+  const restIds = new Set(rest.map(n => n.id));
+  const spec = {nodes: rest.map(n => ({id:'r' + n.id, type:n.type, label:n.label || ''})), edges: []};
+  const meta = {};
+  connections.forEach(c => {
+    if (!restIds.has(c.from) || !restIds.has(c.to)) return;
+    const a = 'r' + c.from, b = 'r' + c.to;
+    spec.edges.push([a, b]);
+    const m = {};
+    if (c.style) m.style = c.style;
+    if (c.label) m.label = c.label;
+    meta[a + '>' + b] = m;
+  });
+  layoutAndInsert(spec, {force:true, meta, keepNodes:lanes});
+}
+
+// ---------- Share link ----------
+function shareLink(){
+  if (!nodes.length){ toast('Diagramm ist leer'); return; }
+  const json = JSON.stringify({name: document.getElementById('diagram-name').value, nodes, connections});
+  const b64 = btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const url = location.origin + location.pathname + '#d=' + b64;
+  const done = () => toast('Link kopiert \u2713');
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(url).then(done, () => prompt('Link kopieren:', url));
+  else prompt('Link kopieren:', url);
+}
+
+// ---------- draw.io export ----------
+function exportDrawio(){
+  if (!nodes.length){ toast('Diagramm ist leer'); return; }
+  const escx = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const styleFor = n => {
+    const c = T().colors[n.type];
+    const fill = c.fill.indexOf('rgba') === 0 ? 'none' : c.fill;
+    const base = 'fillColor=' + fill + ';strokeColor=' + c.stroke + ';fontColor=' + c.stroke + ';';
+    switch(n.type){
+      case 'ereignis': return 'shape=hexagon;perimeter=hexagonPerimeter2;' + base;
+      case 'prozess':  return 'shape=hexagon;perimeter=hexagonPerimeter2;dashed=1;' + base;
+      case 'funktion': return 'rounded=1;arcSize=40;' + base;
+      case 'org':      return 'ellipse;' + base;
+      case 'dokument': return 'shape=document;' + base;
+      case 'and': case 'or': case 'xor': return 'ellipse;' + base;
+      case 'b_start':  return 'ellipse;' + base;
+      case 'b_inter':  return 'ellipse;' + base;
+      case 'b_end':    return 'ellipse;strokeWidth=3;' + base;
+      case 'b_task':   return 'rounded=1;arcSize=15;' + base;
+      case 'b_gw_x': case 'b_gw_and': case 'b_gw_or': return 'rhombus;' + base;
+      case 'b_data':   return 'shape=note;' + base;
+      case 'b_note':   return 'dashed=1;' + base;
+      case 'b_lane':   return 'fillOpacity=8;verticalAlign=top;align=left;spacingLeft=6;' + base;
+      default: return base;
+    }
+  };
+  const gwLabel = {b_gw_x:'X', b_gw_and:'+', b_gw_or:'O', and:'\u2227', or:'\u2228', xor:'XOR'};
+  const cells = [];
+  nodes.forEach(n => {
+    const val = n.label || gwLabel[n.type] || '';
+    cells.push('<mxCell id="n' + n.id + '" value="' + escx(val) + '" style="' + styleFor(n) + '" vertex="1" parent="1"><mxGeometry x="' + Math.round(n.x) + '" y="' + Math.round(n.y) + '" width="' + Math.round(n.w) + '" height="' + Math.round(n.h) + '" as="geometry"/></mxCell>');
+  });
+  connections.forEach((c, i) => {
+    const st = c.style === 'message' ? 'dashed=1;' : c.style === 'assoc' ? 'dashed=1;endArrow=none;' : '';
+    cells.push('<mxCell id="e' + i + '" value="' + escx(c.label || '') + '" style="' + st + 'edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" parent="1" source="n' + c.from + '" target="n' + c.to + '"><mxGeometry relative="1" as="geometry"/></mxCell>');
+  });
+  const xml = '<mxfile host="floei"><diagram name="' + escx(document.getElementById('diagram-name').value || 'Floei') + '"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10"><root><mxCell id="0"/><mxCell id="1" parent="0"/>' + cells.join('') + '</root></mxGraphModel></diagram></mxfile>';
+  if (window.floeiNative && window.floeiNative.saveText){
+    window.floeiNative.saveText(fileBase() + '.drawio', xml).then(r => { if (r && r.ok) toast('draw.io exportiert \u2713'); });
+    return;
+  }
+  const blob = new Blob([xml], {type:'application/xml'});
+  const link = document.createElement('a');
+  link.download = fileBase() + '.drawio';
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 5000);
+  toast('draw.io exportiert \u2713 (in app.diagrams.net \u00f6ffnen)');
+}
+
+// ---------- \u00dcbungsmodus ----------
+const TASKS = [
+  {
+    title: 'Aufgabe 1 \u00b7 Reisebuchung', notation: 'EPK', level: 'schwer',
+    text: 'Der Prozess beginnt mit dem Reisewunsch eines Kunden. Der Reiseb\u00fcro-Mitarbeiter erstellt ein schriftliches Reiseangebot. Der Kunde entscheidet \u00fcber Annahme oder Ablehnung. Bei Annahme merkt der Mitarbeiter die Reise vor; der Betrag muss innerhalb von 3 Tagen \u00fcberwiesen werden. Nach fristgerechtem Zahlungseingang wird die Reise gebucht und die Unterlagen versandt; andernfalls wird die Vormerkung aufgehoben und der Kunde informiert. Bei Ablehnung kann der Kunde abbrechen oder ein weiteres Angebot anfordern.',
+    quick: 'E: Reisewunsch liegt vor\nF: Reiseangebot erstellen\nO: Reiseb\u00fcro-Mitarbeiter\nE: Reiseangebot liegt vor\nF: Angebot pr\u00fcfen\nO: Kunde\nXOR\nE: Angebot angenommen\nF: Reise vormerken\nO: Reiseb\u00fcro-Mitarbeiter\nE: Reise vorgemerkt\nF: Zahlungseingang pr\u00fcfen\nXOR\nE: Zahlung fristgerecht eingegangen\nF: Reise buchen und Unterlagen versenden\nE: Reise gebucht\nEnde\n--\nE: Zahlung nicht eingegangen\nF: Vormerkung aufheben und Kunden informieren\nE: Buchung abgebrochen\nEnde\nMerge\n--\nE: Angebot abgelehnt\nF: Weiteres Vorgehen kl\u00e4ren\nO: Kunde\nXOR\nE: Buchung abgebrochen\nEnde\n--\nE: Neues Angebot gew\u00fcnscht\nF: Neues Angebot erstellen\nO: Reiseb\u00fcro-Mitarbeiter\nE: Angebot liegt vor\nEnde\nMerge\nMerge'
+  },
+  {
+    title: 'Aufgabe 2 \u00b7 Automatischer Rechnungsversand', notation: 'EPK', level: 'mittel',
+    text: 'Nach Eingang einer Bestellung erstellt das System automatisch eine Rechnung und versendet sie per E-Mail (ben\u00f6tigt die Kundendaten). Schl\u00e4gt der Versand fehl, protokolliert das System den Fehler und ein IT-Mitarbeiter pr\u00fcft die Ursache. Bei behebbarer Ursache wird der Fehler behoben und die Rechnung erneut versendet; andernfalls informiert ein Mitarbeiter den Kunden manuell.',
+    quick: 'E: Bestellung eingegangen\nF: Rechnung erstellen\nO: System\nE: Rechnung erstellt\nF: Rechnung versenden\nO: System\nI: Kundendaten\nXOR\nE: Rechnung erfolgreich versendet\nEnde\n--\nE: Versand fehlgeschlagen\nF: Fehler protokollieren\nO: System\nE: Fehler protokolliert\nF: Fehlerursache pr\u00fcfen\nO: IT-Mitarbeiter\nXOR\nE: Ursache behebbar\nF: Fehler beheben und erneut versenden\nE: Rechnung versendet\nEnde\n--\nE: Ursache nicht behebbar\nF: Kunden manuell informieren\nO: Mitarbeiter\nE: Kunde informiert\nEnde\nMerge\nMerge'
+  },
+  {
+    title: 'Aufgabe 3 \u00b7 Support-Ticket', notation: 'EPK', level: 'leicht',
+    text: 'Ein Kunde meldet eine St\u00f6rung. Der First-Level-Support nimmt das Ticket auf und versucht eine L\u00f6sung. Kann das Problem gel\u00f6st werden, wird das Ticket geschlossen. Andernfalls wird es an den Second-Level-Support eskaliert, der das Problem l\u00f6st und das Ticket schlie\u00dft.',
+    quick: 'E: St\u00f6rung gemeldet\nF: Ticket aufnehmen\nO: First-Level-Support\nE: Ticket erfasst\nF: L\u00f6sung versuchen\nXOR\nE: Problem gel\u00f6st\nF: Ticket schlie\u00dfen\nE: Ticket geschlossen\nEnde\n--\nE: Problem nicht gel\u00f6st\nF: An Second-Level eskalieren\nE: Ticket eskaliert\nF: Problem l\u00f6sen und Ticket schlie\u00dfen\nO: Second-Level-Support\nE: Ticket geschlossen\nEnde\nMerge'
+  },
+  {
+    title: 'Aufgabe 4 \u00b7 Online-Bestellung mit Parallelarbeit', notation: 'BPMN', level: 'mittel',
+    text: 'Eine Bestellung geht ein und wird gepr\u00fcft. Ist die Bestellung nicht in Ordnung, wird sie abgelehnt (Prozessende). Andernfalls laufen zwei Aufgaben parallel: das Lager kommissioniert die Ware, w\u00e4hrend die Buchhaltung die Rechnung erstellt. Erst wenn beides abgeschlossen ist, wird die Ware versendet und der Prozess endet.',
+    spec: {nodes:[
+      {id:'s', type:'b_start', label:'Bestellung eingegangen'},
+      {id:'t1', type:'b_task', label:'Bestellung pr\u00fcfen'},
+      {id:'g1', type:'b_gw_x', label:'Bestellung ok?'},
+      {id:'e1', type:'b_end', label:'Bestellung abgelehnt'},
+      {id:'g2', type:'b_gw_and', label:''},
+      {id:'t2', type:'b_task', label:'Ware kommissionieren'},
+      {id:'t3', type:'b_task', label:'Rechnung erstellen'},
+      {id:'g3', type:'b_gw_and', label:''},
+      {id:'t4', type:'b_task', label:'Ware versenden'},
+      {id:'e2', type:'b_end', label:'Bestellung abgeschlossen'}
+    ], edges:[['s','t1'],['t1','g1'],['g1','e1'],['g1','g2'],['g2','t2'],['g2','t3'],['t2','g3'],['t3','g3'],['g3','t4'],['t4','e2']]}
+  }
+];
+let currentTask = null;
+
+function pickTask(){
+  let next;
+  do { next = TASKS[Math.floor(Math.random() * TASKS.length)]; } while (TASKS.length > 1 && next === currentTask);
+  currentTask = next;
+  document.getElementById('train-fb').textContent = '';
+  renderTrain();
+}
+function renderTrain(){
+  if (!currentTask) return;
+  document.getElementById('train-badge').textContent = currentTask.notation + ' \u00b7 ' + currentTask.level;
+  document.getElementById('train-title').textContent = currentTask.title;
+  document.getElementById('train-text').textContent = currentTask.text;
+}
+function loadSolution(){
+  if (!currentTask) return;
+  try {
+    const spec = currentTask.quick ? parseQuickGraph(currentTask.quick) : currentTask.spec;
+    layoutAndInsert(spec);
+    document.getElementById('train-bg').style.display = 'none';
+  } catch(err){ toast('Fehler: ' + (err.message || err)); }
+}
+async function trainFeedback(){
+  const fb = document.getElementById('train-fb');
+  if (!currentTask){ return; }
+  if (!nodes.length){ fb.textContent = 'Erst modellieren, dann Feedback holen \u2014 das Diagramm ist noch leer.'; return; }
+  const key = (document.getElementById('api-key').value || '').trim() || (window.floeiNative && window.floeiNative.getKeySync()) || localStorage.getItem('floei-api-key') || '';
+  if (!key){ fb.textContent = 'F\u00fcr KI-Feedback wird ein Anthropic API-Schl\u00fcssel ben\u00f6tigt (im \u26a1 Auto-Dialog, Tab KI-Modus, einmalig eintragen).'; return; }
+  const btn = document.getElementById('train-feedback');
+  btn.disabled = true; fb.textContent = 'Bewerte dein Diagramm\u2026';
+  const dia = nodes.map(n => n.id + ':' + n.type + (n.label ? '[' + n.label + ']' : '')).join('; ') +
+    ' || Kanten: ' + connections.map(c => c.from + '->' + c.to + (c.label ? '(' + c.label + ')' : '')).join('; ');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1200,
+        system: 'Du bist IHK-Pr\u00fcfer f\u00fcr Prozessmodellierung (' + currentTask.notation + '). Bewerte das Diagramm des Pr\u00fcflings gegen die Aufgabe. Antworte auf Deutsch, kompakt: zuerst "Punkte: X/100", dann max. 5 kurze Anmerkungen (Fehler zuerst, dann Verbesserungen, dann Lob). Kein Markdown.',
+        messages: [{role:'user', content:'Aufgabe: ' + currentTask.text + '\n\nDiagramm des Pr\u00fcflings (Knoten id:typ[label]):\n' + dia}]})
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || 'API-Fehler');
+    fb.textContent = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n').trim() || 'Keine Antwort erhalten.';
+  } catch(err){
+    fb.textContent = 'Fehler: ' + (err.message || err);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ---------- wiring for new UI ----------
+document.getElementById('btn-layout').onclick = relayoutExisting;
+
+const poolBg = document.getElementById('pool-bg');
+document.getElementById('btn-pool').onclick = () => { poolBg.style.display = 'flex'; document.getElementById('pool-name').focus(); };
+document.getElementById('pool-cancel').onclick = () => poolBg.style.display = 'none';
+poolBg.addEventListener('pointerdown', e => { if (e.target.id === 'pool-bg') poolBg.style.display = 'none'; });
+document.getElementById('pool-go').onclick = () => {
+  const name = document.getElementById('pool-name').value.trim();
+  const laneNames = document.getElementById('pool-lanes').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const W = Math.max(400, Math.min(4000, parseInt(document.getElementById('pool-width').value) || 1200));
+  if (!laneNames.length){ toast('Mindestens eine Lane angeben'); return; }
+  const laneH = 150, headerH = 30;
+  save();
+  // place at current view top-left in world coords
+  const origin = screenToWorld(60, 80);
+  const ox = origin.x, oy = origin.y;
+  // pool header bar (a lane styled as title): use a thin b_lane with vertical label across full width — represent as a lane of small height with the pool name
+  laneNames.forEach((ln, i) => {
+    const lane = {id:idCounter++, type:'b_lane', label:ln, x:ox, y:oy + headerH + i*laneH, w:W, h:laneH};
+    nodes.unshift(lane);
+  });
+  // pool title strip on top (full width, short) — reuse b_lane rotated label won't suit horizontal title,
+  // so use a b_group-like header: a thin lane whose label shows pool name centered via a dedicated flag
+  const header = {id:idCounter++, type:'b_lane', label:name || 'Pool', x:ox, y:oy, w:W, h:headerH, poolHeader:true};
+  nodes.unshift(header);
+  selected = null; selectedConn = null;
+  poolBg.style.display = 'none';
+  persist(); draw(); updateStats(); updateProps();
+  // fit view
+  const b = contentBounds();
+  const sc = Math.min((wrap.clientWidth-80)/b.w, (wrap.clientHeight-80)/b.h);
+  zoom = Math.max(0.2, Math.min(1, sc)); panX = wrap.clientWidth/2 - (b.x+b.w/2)*zoom; panY = 40 - b.y*zoom;
+  updateZoomLabel(); draw();
+  toast(laneNames.length + ' Lanes erstellt ✓');
+};
+
+document.getElementById('btn-check').onclick = openCheck;
+document.getElementById('check-close').onclick = () => document.getElementById('check-bg').style.display = 'none';
+document.getElementById('check-rerun').onclick = openCheck;
+document.getElementById('check-bg').addEventListener('pointerdown', e => { if (e.target.id === 'check-bg') e.target.style.display = 'none'; });
+
+document.getElementById('btn-train').onclick = () => { if (!currentTask) pickTask(); else renderTrain(); document.getElementById('train-bg').style.display = 'flex'; };
+document.getElementById('train-new').onclick = pickTask;
+document.getElementById('train-model').onclick = () => document.getElementById('train-bg').style.display = 'none';
+document.getElementById('train-solution').onclick = loadSolution;
+document.getElementById('train-feedback').onclick = trainFeedback;
+document.getElementById('train-close').onclick = () => document.getElementById('train-bg').style.display = 'none';
+document.getElementById('train-bg').addEventListener('pointerdown', e => { if (e.target.id === 'train-bg') e.target.style.display = 'none'; });
+
+document.getElementById('btn-drawio').onclick = () => { closeMenus(); exportDrawio(); };
+document.getElementById('btn-share').onclick = () => { closeMenus(); shareLink(); };
+document.getElementById('btn-export-menu').onclick = (e) => {
+  e.stopPropagation();
+  const m = document.getElementById('export-menu');
+  const open = m.classList.contains('open');
+  closeMenus();
+  if (!open) m.classList.add('open');
+};
+document.getElementById('btn-docs').onclick = (e) => {
+  e.stopPropagation();
+  const m = document.getElementById('doc-menu');
+  const open = m.classList.contains('open');
+  closeMenus();
+  if (!open){ renderDocMenu(); m.classList.add('open'); }
+};
+document.addEventListener('click', e => {
+  if (!e.target.closest('.menu') || e.target.closest('#export-menu button')) closeMenus();
 });
 
 // init

@@ -1,0 +1,33 @@
+{
+  "name": "floei",
+  "version": "2.0.0",
+  "description": "EPK & BPMN diagram editor with AI-powered generation",
+  "author": "Feyza Karuç",
+  "license": "MIT",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^31.3.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "dev.feyak.floei",
+    "productName": "Floei",
+    "files": ["index.html", "electron/**"],
+    "directories": { "output": "dist" },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}
