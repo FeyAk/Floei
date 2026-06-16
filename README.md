@@ -2,7 +2,7 @@
 
 A lightweight, browser-based **EPK diagram editor** (Ereignisgesteuerte Prozesskette / Event-driven Process Chain) — built with vanilla JavaScript and the HTML5 Canvas API. No frameworks, no build step, no dependencies. One file, works offline.
 
-**[▶ Try it live](https://feyak.github.io/floei/)**
+**[▶ Try it live](https://feyak.github.io/Floei/)**
 
 ## Why
 
